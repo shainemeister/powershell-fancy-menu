@@ -1,4 +1,4 @@
-# PsMenuKit.Core — dependency-free menu engine for Windows PowerShell 5.1
+# PsMenuKit.Core - dependency-free menu engine for Windows PowerShell 5.1
 # Dot-sources Public and Private functions; exports public surface only.
 
 $script:PsMenuKitCoreRoot = $PSScriptRoot

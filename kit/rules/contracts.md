@@ -20,11 +20,11 @@ last_updated: "2026-07-28"
 
 # Contracts
 
-Stable promises a repository makes—behavior, shapes, exits, fields—and the rules for keeping them honest.
+Stable promises a repository makes - behavior, shapes, exits, fields - and the rules for keeping them honest.
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) · [architecture.md](./architecture.md) · [versioning-and-git.md](./versioning-and-git.md) · [verification-and-ops.md](./verification-and-ops.md) · [authoring-and-style.md](./authoring-and-style.md) · [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md)
+**Related:** [RULES.md](../RULES.md) | [architecture.md](./architecture.md) | [versioning-and-git.md](./versioning-and-git.md) | [verification-and-ops.md](./verification-and-ops.md) | [authoring-and-style.md](./authoring-and-style.md) | [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md)
 
 ---
 
@@ -34,7 +34,7 @@ Stable promises a repository makes—behavior, shapes, exits, fields—and the r
 |------|----------|
 | Give every contract one **canonical** owner (authority map) | Duplicate full contracts across README / guides |
 | Update canonical docs with behavior in the **same change set** | Silently rename public APIs, CLI fields, or schema columns |
-| Cross-link with relative paths and deep anchors | Leave contracts empty until “docs later” after behavior ships |
+| Cross-link with relative paths and deep anchors | Leave contracts empty until "docs later" after behavior ships |
 
 **Authority map** answers: *which file owns this concern?*  
 **This file** answers: *what counts as a contract, when it breaks, and what must move together?*
@@ -78,7 +78,7 @@ Package structure and runtime boundaries are **architecture** ([architecture.md]
 4. **Explainability** (if the product scores, ranks, or attributes metrics): keep intermediate audit fields; do not collapse into a single misleading total without documentation.  
 5. **Fixtures / golden tests** are contracts. Behavior changes must keep validation green or deliberately refresh expected outputs with a documented reason.  
 6. **No real credentials, tokens, regulated personal data, or production dumps** in the repository. Samples are synthetic or non-sensitive illustrations.  
-7. **Regenerable output directories** (e.g. `output/`, build artifacts, diagnostics certificates) are workspace only—not source of truth and not versioned.
+7. **Regenerable output directories** (e.g. `output/`, build artifacts, diagnostics certificates) are workspace only - not source of truth and not versioned.
 
 Owner paths live in the [authority map](../RULES.md#authority-map). When a concern has no row, add one before shipping the surface.
 
@@ -93,7 +93,7 @@ When behavior or a public contract changes, ship together (as applicable):
 3. Version bump when a public surface changes  
 4. Project `CHANGELOG.md` when the change is release-worthy  
 
-Details: [versioning-and-git.md](./versioning-and-git.md). Proof before “done”: [verification-and-ops.md](./verification-and-ops.md).
+Details: [versioning-and-git.md](./versioning-and-git.md). Proof before "done": [verification-and-ops.md](./verification-and-ops.md).
 
 ---
 
@@ -108,9 +108,9 @@ Every substantial markdown file should remain navigable for humans and AI agents
 | **Authority map** ([hub](../RULES.md#authority-map)) | Establishing *owner path* for a concern |
 | Frontmatter **`related:`** | Peer docs (not the entire tree) |
 | In-body **Related:** line under the lead | Same peers, human-scannable |
-| **Relative links** | Always from *this file’s* directory (`./`, `../`) |
+| **Relative links** | Always from *this file's* directory (`./`, `../`) |
 | **Deep anchors** | Point at a specific rule (e.g. `#same-change-set-rule`) |
-| **One-sentence summary + link** | Prefer over pasting another document’s full table |
+| **One-sentence summary + link** | Prefer over pasting another document's full table |
 
 ### Form vs policy
 
@@ -123,7 +123,7 @@ Every substantial markdown file should remain navigable for humans and AI agents
 
 - Fork a second full copy of a CLI matrix into the root README  
 - Use absolute machine-only paths as the only example  
-- Leave bidirectional pairs one-way for critical peers (hub ↔ domain rules; contracts ↔ versioning/verification)
+- Leave bidirectional pairs one-way for critical peers (hub  domain rules; contracts  versioning/verification)
 
 ---
 
@@ -132,8 +132,8 @@ Every substantial markdown file should remain navigable for humans and AI agents
 | Avoid | Prefer |
 |-------|--------|
 | README as the only API/CLI contract | Canonical package guide + short README summary |
-| Empty `SECURITY.md` “for the template” | Omit when [security modularity](./security.md#security-documentation-modularity) allows |
-| Code ships, guide “later” | Same change set as the canonical doc |
+| Empty `SECURITY.md` "for the template" | Omit when [security modularity](./security.md#security-documentation-modularity) allows |
+| Code ships, guide "later" | Same change set as the canonical doc |
 | Silent public field or API rename | Coordinated contract bump + fixtures + docs + CHANGELOG |
 | Duplicating full matrices into every doc | Link + short summary |
 
@@ -143,4 +143,4 @@ Every substantial markdown file should remain navigable for humans and AI agents
 
 | Version | Notes |
 |---------|--------|
-| 1.0.0 | New first-class module for kit 2.0; ownership rules from former “Data and contract rules”; cross-reference policy |
+| 1.0.0 | New first-class module for kit 2.0; ownership rules from former "Data and contract rules"; cross-reference policy |

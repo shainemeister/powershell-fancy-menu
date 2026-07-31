@@ -1,5 +1,5 @@
 ---
-title: "{{PRODUCT_OR_REPO_NAME}} — Security and code-validation certification"
+title: "{{PRODUCT_OR_REPO_NAME}} - Security and code-validation certification"
 description: "Operator guide for regenerable self-attestation certificates (security static analysis and code validation)."
 version: "{{VERSION}}"
 status: draft
@@ -15,14 +15,14 @@ related:
 last_updated: "{{LAST_UPDATED}}"
 ---
 
-# {{PRODUCT_OR_REPO_NAME}} — Certification
+# {{PRODUCT_OR_REPO_NAME}} - Certification
 
 Operator guide for the **formal, regenerable** security and code-validation certificate for this repository. Implementation of an automated harness is optional; this folder documents schema and how to regenerate the pair.
 
 **Document version:** {{VERSION}}  
 **Status:** draft  
 
-**Related:** [Security and code-validation certification](../rules/security.md#security-and-code-validation-certification) · [Language surface inventory](../rules/security.md#language-surface-inventory) · [RULES.md](../RULES.md)
+**Related:** [Security and code-validation certification](../rules/security.md#security-and-code-validation-certification) | [Language surface inventory](../rules/security.md#language-surface-inventory) | [RULES.md](../RULES.md)
 
 ---
 
@@ -32,7 +32,7 @@ Operator guide for the **formal, regenerable** security and code-validation cert
 |------|----------|
 | **What** | Developer **self-attestation** certificate (JSON + TXT) for Domain A (security / SAST) **and** Domain B (code validation) |
 | **Where** | This folder only: `certification/` |
-| **Who runs it** | Developers / release reviewers — **not** end-user product launchers |
+| **Who runs it** | Developers / release reviewers - **not** end-user product launchers |
 | **Product impact** | Must **not** gate product CLI or end-user install |
 | **Harness** | Optional; may regenerate outputs manually until a project or kit runner exists |
 

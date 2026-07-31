@@ -24,7 +24,7 @@ Ship gates, completion rules, cadence, anti-patterns, and the contributor checkl
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) · [security.md](./security.md) · [authoring-and-style.md](./authoring-and-style.md) · [contracts.md](./contracts.md) · [versioning-and-git.md](./versioning-and-git.md) · [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) · [UPGRADE.md](../UPGRADE.md)
+**Related:** [RULES.md](../RULES.md) | [security.md](./security.md) | [authoring-and-style.md](./authoring-and-style.md) | [contracts.md](./contracts.md) | [versioning-and-git.md](./versioning-and-git.md) | [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) | [UPGRADE.md](../UPGRADE.md)
 
 ---
 
@@ -94,7 +94,7 @@ Ordered steps for humans and AI agents:
 | Language surface added or removed | Update [language surface inventory](./security.md#language-surface-inventory) + verification rows (+ certification checks if maintained) |
 | Every release-worthy package behavior change | Bump code version; refresh CLI/API guide and status blocks; update `CHANGELOG.md` |
 | Every product Python edit | Run pylint gate; keep exit 0 / 10.00 score; run Bandit if Python is in inventory |
-| Every product edit in another declared language | Run that surface’s Domain B + Domain A gates |
+| Every product edit in another declared language | Run that surface's Domain B + Domain A gates |
 | Security-relevant change | Update matching security doc; re-run declared SAST; CHANGELOG entry |
 | Formal certification maintained | Regenerate `last_certification.*` after critical gates; do not commit outputs |
 | Fixture failure after intentional math/logic change | Refresh expected outputs only with methodology note |
@@ -109,7 +109,7 @@ Ordered steps for humans and AI agents:
 |-------|--------|
 | Shipping pylint as a product runtime dependency | Keep pylint developer-only |
 | Skipping pylint after Python product edits | Run `python -m pylint <package_or_paths>` |
-| Committing regenerable outputs “for convenience” | Document regenerate commands in README / catalog |
+| Committing regenerable outputs "for convenience" | Document regenerate commands in README / catalog |
 | Silent public field or API rename | Coordinated contract bump + fixtures + docs ([contracts.md](./contracts.md)) |
 | Long docs without Summary | MARKDOWN-STANDARD order |
 | Duplicating security matrices into README | Link to security doc |
@@ -127,8 +127,8 @@ Ordered steps for humans and AI agents:
 | Empty language inventory while shipping product code | Fill inventory when product languages exist |
 | `feat` commit that only edits markdown | Use `docs` / `docs(scope)` |
 | Leaving SETUP.md forever after adoption | Delete or archive after initiation; keep [Kit baseline](../RULES.md#kit-baseline); use [UPGRADE.md](../UPGRADE.md) |
-| Language style “somehow” without a named gate | Declare tool + pass criteria in verification table |
-| No project `CHANGELOG.md` | Maintain root CHANGELOG (repository H2 → version H3 → category H4) |
+| Language style "somehow" without a named gate | Declare tool + pass criteria in verification table |
+| No project `CHANGELOG.md` | Maintain root CHANGELOG (repository H2 -> version H3 -> category H4) |
 | Package version bump without CHANGELOG section | Add matching `### [X.Y.Z]` in the same change set |
 | Shipping release-worthy behavior without CHANGELOG | Same change set: behavior + canonical docs + version + CHANGELOG |
 | Kit upgrade with no baseline or CHANGELOG note | Update Adopted kit version/date and project CHANGELOG via [UPGRADE.md](../UPGRADE.md) |

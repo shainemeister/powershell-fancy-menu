@@ -85,9 +85,9 @@ Runtime: **Windows PowerShell 5.1**. Zero product dependencies.
 
 Returns a **MenuResult** (see below). Does not call `exit`; host scripts decide process exit codes.
 
-**Console lifecycle:** saves/restores window title and cursor visibility on exit (best effort). Ctrl+C may prevent restore on some hosts — see SECURITY supported environments.
+**Console lifecycle:** saves/restores window title and cursor visibility on exit (best effort). Ctrl+C may prevent restore on some hosts - see SECURITY supported environments.
 
-**Edge behavior:** empty items → `EmptyMenu`; all-disabled → stay until Esc; long labels truncated; nest beyond max stays on parent (no deeper open).
+**Edge behavior:** empty items -> `EmptyMenu`; all-disabled -> stay until Esc; long labels truncated; nest beyond max stays on parent (no deeper open).
 
 ## Feature module surfaces
 
@@ -96,7 +96,7 @@ Returns a **MenuResult** (see below). Does not call `exit`; host scripts decide 
 | Parameter | Required | Notes |
 |-----------|----------|-------|
 | `Path` | Yes | Local `.psd1` or `.json` only (URI schemes rejected) |
-| `HandlerMap` | No | `hashtable` of handler name → scriptblock (**host-trusted code**) |
+| `HandlerMap` | No | `hashtable` of handler name -> scriptblock (**host-trusted code**) |
 | `DefaultAction` | No | Fallback scriptblock when Handler missing |
 | `AllowedRoot` | No | Resolved path must stay under this directory (enterprise recommended) |
 | `AllowUnc` | No | Switch; UNC paths rejected by default |
@@ -117,7 +117,7 @@ Switches: `-IncludeUser`, `-IncludeComputer`, `-IncludeTime`, `-IncludeDate`; pl
 | `ItemId` | string | Selected item id (null if cancelled; comma-joined for multi) |
 | `Label` | string | Selected label(s) |
 | `ActionResult` | object | ActionResult or ActionResult[] for multi |
-| `Reason` | string | `Selected`, `MultiSelected`, `UserQuit`, `EmptyMenu`, `NestedDepthExceeded`, … |
+| `Reason` | string | `Selected`, `MultiSelected`, `UserQuit`, `EmptyMenu`, `NestedDepthExceeded`, ... |
 | `Selections` | object[] | Always present (may be empty array) |
 
 ### ActionResult (`PSTypeName = PsMenuKit.ActionResult`)
@@ -138,7 +138,7 @@ Switches: `-IncludeUser`, `-IncludeComputer`, `-IncludeTime`, `-IncludeDate`; pl
 | Enter | Activate selected item; multi = batch selected or focused |
 | Esc | Clear filter if non-empty (Search); else quit / nested back |
 | `Q` | Quit when filter empty (hotkey `q` wins if present) |
-| `1`–`9` | Jump selection to index (when filter empty) |
+| `1`-`9` | Jump selection to index (when filter empty) |
 | Hotkey char | Select and activate (filter empty; single-select) |
 | Type chars | Append filter query (Search module loaded) |
 | Backspace | Delete last filter character (Search) |
@@ -156,7 +156,7 @@ Suggested mapping for launcher scripts (not enforced by Core):
 
 ## Launcher demo
 
-**Lab / developer** (local Bypass — not a permanent host policy change):
+**Lab / developer** (local Bypass - not a permanent host policy change):
 
 ```cmd
 demos\Launch.cmd

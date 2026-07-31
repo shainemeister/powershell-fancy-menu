@@ -1,4 +1,4 @@
-# PsMenuKit.Config — load menu models from .psd1 / JSON (PS 5.1)
+# PsMenuKit.Config - load menu models from .psd1 / JSON (PS 5.1)
 # Security: local filesystem only; Handler names mapped by host; no code-from-file.
 
 function Import-PsMenuConfig {

@@ -1,4 +1,4 @@
-# PsMenuKit.MultiSelect — toggle selection markers on items (PS 5.1)
+# PsMenuKit.MultiSelect - toggle selection markers on items (PS 5.1)
 # Core uses these helpers when Menu.MultiSelect is $true.
 
 function Set-PsMenuItemSelection {

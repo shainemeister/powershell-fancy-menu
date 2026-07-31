@@ -19,11 +19,11 @@ last_updated: "2026-07-28"
 
 # Upgrade repo-kit
 
-Durable procedure for **repositories that already adopted** the Repository Standards Kit. Not deleted after initiation—keep under project `kit/` or always open this file at Kit source.
+Durable procedure for **repositories that already adopted** the Repository Standards Kit. Not deleted after initiation - keep under project `kit/` or always open this file at Kit source.
 
 **Document version:** 1.1.0  
 
-**Related:** [RULES.md](./RULES.md) · [SETUP.md](./SETUP.md) · [CHANGELOG.md](./CHANGELOG.md) · [README.md](../README.md) · [versioning-and-git.md](./rules/versioning-and-git.md) · [hygiene.md](./rules/hygiene.md)
+**Related:** [RULES.md](./RULES.md) | [SETUP.md](./SETUP.md) | [CHANGELOG.md](./CHANGELOG.md) | [README.md](../README.md) | [versioning-and-git.md](./rules/versioning-and-git.md) | [hygiene.md](./rules/hygiene.md)
 
 ---
 
@@ -31,13 +31,13 @@ Durable procedure for **repositories that already adopted** the Repository Stand
 
 | Situation | Use |
 |-----------|-----|
-| **No** Kit baseline / never adopted | Stop — use [SETUP.md](./SETUP.md) (first adopt) |
-| Baseline ≥ 2.0 **and** standards already under `kit/` | [Routine upgrade procedure](#routine-upgrade-procedure) |
+| **No** Kit baseline / never adopted | Stop - use [SETUP.md](./SETUP.md) (first adopt) |
+| Baseline >= 2.0 **and** standards already under `kit/` | [Routine upgrade procedure](#routine-upgrade-procedure) |
 | Baseline **&lt; 2.0** **or** standards still on **project root** (1.x layout) | [Migrate from kit 1.x / root layout to 2.x](#migrate-from-kit-1x--root-layout-to-2x) then routine steps for remaining deltas |
 
 **Prerequisite:** Kit baseline table exists (in `kit/RULES.md`, or root `RULES.md` until migrated). See [Kit baseline](./RULES.md#kit-baseline).
 
-**Packaging target:** merge standards into the project’s **`kit/`** tree. Keep product code and **project root** `CHANGELOG.md` outside `kit/`. See [hygiene.md](./rules/hygiene.md).
+**Packaging target:** merge standards into the project's **`kit/`** tree. Keep product code and **project root** `CHANGELOG.md` outside `kit/`. See [hygiene.md](./rules/hygiene.md).
 
 ---
 
@@ -66,15 +66,15 @@ Durable procedure for **repositories that already adopted** the Repository Stand
 
 ## Routine upgrade procedure
 
-1. Read this project’s **Kit baseline** (Adopted kit version, Kit source, Adopted on) in **`kit/RULES.md`**.  
-2. Open **Kit source** (canonical: https://github.com/shainemeister/repo-kit) → [`kit/CHANGELOG.md`](./CHANGELOG.md) → `## repo-kit`.  
+1. Read this project's **Kit baseline** (Adopted kit version, Kit source, Adopted on) in **`kit/RULES.md`**.  
+2. Open **Kit source** (canonical: https://github.com/shainemeister/repo-kit) -> [`kit/CHANGELOG.md`](./CHANGELOG.md) -> `## repo-kit`.  
 3. List releases **after** your Adopted kit version only.  
 4. Build a **focused merge plan**: only pieces this project uses (hub `RULES.md`, `rules/*`, `MARKDOWN-STANDARD.md`, templates, configs, `.gitignore` patterns).  
-5. **Merge into project `kit/`** — not onto the product root.  
-6. **Preserve** project-specific values — see [Preserve list](#preserve-list).  
-7. Fix relative links (`../README.md`, `../CHANGELOG.md`, `../packages/…`).  
+5. **Merge into project `kit/`** - not onto the product root.  
+6. **Preserve** project-specific values - see [Preserve list](#preserve-list).  
+7. Fix relative links (`../README.md`, `../CHANGELOG.md`, `../packages/...`).  
 8. Update **Adopted kit version** and **Adopted on**; keep Kit source unchanged (unless deliberate fork).  
-9. **Project root** `CHANGELOG.md`: short note (e.g. “Upgraded repo-kit baseline to X.Y.Z”)—**never** paste full kit history.  
+9. **Project root** `CHANGELOG.md`: short note (e.g. "Upgraded repo-kit baseline to X.Y.Z") - **never** paste full kit history.  
 10. Re-run the project verification table / [completion rule](./rules/verification-and-ops.md#completion-rule).  
 11. Optional: refresh local `kit/UPGRADE.md` from upstream.
 
@@ -118,7 +118,7 @@ Kit **2.0+** packages standards under `kit/` and splits RULES into a hub plus do
 | Contracts module | Ensure [contracts](./rules/contracts.md) exists; authority-map row for contract policy |
 | Project CHANGELOG | Remains at **repo root** |
 | Product code | Never under `kit/` |
-| Authority map | Standards → `kit/…`; product → packages/paths outside; history → `../CHANGELOG.md` from kit files |
+| Authority map | Standards -> `kit/...`; product -> packages/paths outside; history -> `../CHANGELOG.md` from kit files |
 | AI / runbooks | Point at `kit/UPGRADE.md`, `kit/RULES.md`, Kit source `kit/CHANGELOG.md` |
 
 ### Checklist
@@ -128,7 +128,7 @@ Kit **2.0+** packages standards under `kit/` and splits RULES into a hub plus do
 - [ ] Merge hub shape + domain modules from upstream  
 - [ ] Keep project `CHANGELOG.md` at root; do not replace it with kit CHANGELOG  
 - [ ] Update authority map paths and deep links  
-- [ ] Update agent prompts / internal docs to `kit/…` paths  
+- [ ] Update agent prompts / internal docs to `kit/...` paths  
 - [ ] Set baseline to latest 2.x after applying deltas  
 - [ ] Project CHANGELOG note for major kit / layout upgrade  
 
@@ -173,7 +173,7 @@ Upgrade repo-kit for this repository (Kit baseline in kit/RULES.md).
 4. Update Kit baseline; add a short note to project root CHANGELOG.md.
 ```
 
-### 1.x / root layout → 2.x migration
+### 1.x / root layout -> 2.x migration
 
 ```text
 Migrate this repository to repo-kit 2.x packaging using kit/UPGRADE.md (Migrate from kit 1.x / root layout to 2.x).

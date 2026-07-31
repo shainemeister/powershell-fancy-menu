@@ -1,6 +1,6 @@
 @{
     Title       = 'PsMenuKit Demo'
-    Subtitle    = 'Pure PowerShell 5.1 · modular features · type to filter'
+    Subtitle    = 'Pure PowerShell 5.1 | modular features | type to filter'
     Theme       = 'Dark'
     MultiSelect = $false
     Items       = @(

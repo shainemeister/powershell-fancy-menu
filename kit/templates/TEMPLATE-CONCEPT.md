@@ -54,7 +54,7 @@ last_updated: "{{LAST_UPDATED}}"
 
 ## Version or phase design
 
-### Version / Phase 1 — {{PHASE_1_NAME}}
+### Version / Phase 1 - {{PHASE_1_NAME}}
 
 **Goal:** {{PHASE_1_GOAL}}
 
@@ -62,7 +62,7 @@ last_updated: "{{LAST_UPDATED}}"
 |------|--------|
 | {{ITEM}} | {{NOTES}} |
 
-### Version / Phase 2 — {{PHASE_2_NAME}}
+### Version / Phase 2 - {{PHASE_2_NAME}}
 
 **Goal:** {{PHASE_2_GOAL}}
 

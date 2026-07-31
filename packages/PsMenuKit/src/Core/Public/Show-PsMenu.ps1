@@ -414,7 +414,7 @@ function Invoke-PsMenuActivateItem {
         if ($null -ne $nestedResult -and -not $nestedResult.Cancelled) {
             return [pscustomobject]@{ Continue = $false; Result = $nestedResult }
         }
-        # NestedDepthExceeded / EmptyChildren / UserQuit from child → redraw parent
+        # NestedDepthExceeded / EmptyChildren / UserQuit from child -> redraw parent
         return [pscustomobject]@{ Continue = $true; Result = $null }
     }
 

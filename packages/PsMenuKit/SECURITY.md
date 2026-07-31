@@ -20,15 +20,15 @@ related:
 last_updated: "2026-07-30"
 ---
 
-# PsMenuKit — Security & Execution Notes
+# PsMenuKit - Security & Execution Notes
 
 Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free interactive console menu framework for **Windows PowerShell 5.1**.
 
 **Package version:** 0.3.0  
 **Package folder:** `packages/PsMenuKit/`  
-**Runtime:** Windows PowerShell 5.1 (`powershell.exe`) — zero product runtime dependencies
+**Runtime:** Windows PowerShell 5.1 (`powershell.exe`) - zero product runtime dependencies
 
-**Related docs:** [README.md](./README.md) · [CLI-GUIDE.md](./CLI-GUIDE.md) · [METHODOLOGY.md](./METHODOLOGY.md) · [kit/rules/security.md](../../kit/rules/security.md)
+**Related docs:** [README.md](./README.md) | [CLI-GUIDE.md](./CLI-GUIDE.md) | [METHODOLOGY.md](./METHODOLOGY.md) | [kit/rules/security.md](../../kit/rules/security.md)
 
 ---
 
@@ -81,9 +81,9 @@ Aligned with repo-kit security baseline: privilege, network, secrets, dependenci
 
 ```text
 Untrusted (remote URLs, foreign shares, unreviewed HandlerMap)
-        ✕
-Current user session → host script (trusted HandlerMap)
-                    → PsMenuKit (local UI + local config data)
+        x
+Current user session -> host script (trusted HandlerMap)
+                    -> PsMenuKit (local UI + local config data)
 ```
 
 ---
@@ -95,7 +95,7 @@ Current user session → host script (trusted HandlerMap)
 | `Invoke-Expression` / `IEX` on file or user input | Arbitrary code execution | **Banned** (enforced by `tests/Security.BanList.Tests.ps1`) |
 | `Invoke-WebRequest` / `WebClient` / `DownloadString` in kit modules | Remote load | **Banned** |
 | Kit-initiated elevation (`RunAs`, permanent admin) | Privilege escalation | **Banned** |
-| Base64 / encoded payload → execute | Obfuscated malware pattern | **Banned** |
+| Base64 / encoded payload -> execute | Obfuscated malware pattern | **Banned** |
 | Config fields executed as code (`ActionScript`, `Command`, `ScriptBlock` strings from file) | Config-as-RCE | **Banned** (schema reject) |
 | Permanent `Set-ExecutionPolicy Unrestricted` (or similar) in product | Weakens host | **Banned** |
 | Hard-coded credentials / tokens | Secret exposure | **Banned** |
@@ -109,7 +109,7 @@ Current user session → host script (trusted HandlerMap)
 | `Import-PowerShellDataFile` | Local `.psd1` menu **data** only |
 | `ConvertFrom-Json` | Local `.json` menu **data** only |
 | Host `scriptblock` Actions / HandlerMap | Trusted, reviewed host application code |
-| Demo `-ExecutionPolicy Bypass` | **Local demo only** — see [Launcher policy](#7-launcher-policy) |
+| Demo `-ExecutionPolicy Bypass` | **Local demo only** - see [Launcher policy](#7-launcher-policy) |
 
 ---
 
@@ -120,7 +120,7 @@ Current user session → host script (trusted HandlerMap)
 | Run PowerShell scripts from an approved folder | Menu host + kit modules | AppLocker / WDAC path allowlist (customer-owned) |
 | Interactive console (conhost or Windows Terminal) | UI | Standard user desktop |
 | Optional: script signing (AllSigned / RemoteSigned) | Enterprise launcher without Bypass | Authenticode process (customer-owned) |
-| Developer-only: PSScriptAnalyzer | Pre-ship SAST (Domain A) | Dev workstation / CI — **not** end-user install |
+| Developer-only: PSScriptAnalyzer | Pre-ship SAST (Domain A) | Dev workstation / CI - **not** end-user install |
 
 **Not required / not requested by this product:**
 
@@ -148,7 +148,7 @@ Current user session → host script (trusted HandlerMap)
 | Config extensions | `.psd1`, `.json` only |
 | Config location | Local path; URI schemes rejected; UNC default-deny |
 | Config allowlist | `-AllowedRoot` recommended for enterprise hosts |
-| Handler binding | Name → host HandlerMap only; missing handler ⇒ no action unless host sets DefaultAction |
+| Handler binding | Name -> host HandlerMap only; missing handler => no action unless host sets DefaultAction |
 | Secrets | Do not place secrets in menu labels, config, Meta, or status lines |
 | Nested depth | Default max depth **8** (fail soft / stay on parent) |
 | Console restore | Title + cursor restored on normal exit (best effort on Ctrl+C) |
@@ -218,7 +218,7 @@ Production hosts should:
 
 ## 9. Recommended validation
 
-Developer tooling only — not product runtime dependencies. Declared Domain B/A gates live in [kit/RULES.md](../../kit/RULES.md).
+Developer tooling only - not product runtime dependencies. Declared Domain B/A gates live in [kit/RULES.md](../../kit/RULES.md).
 
 **Primary (all required smokes)**
 

@@ -1,11 +1,11 @@
-# PsMenuKit.Status — status line builder for menu headers (PS 5.1)
+# PsMenuKit.Status - status line builder for menu headers (PS 5.1)
 
 function New-PsMenuStatusLine {
     <#
     .SYNOPSIS
         Builds a single status line from common slots and custom text.
     .DESCRIPTION
-        Pieces are joined with ' · '. Omit switches you do not want.
+        Pieces are joined with ' | '. Omit switches you do not want.
     .PARAMETER Text
         Optional free-form segments (string or string[]).
     .PARAMETER IncludeUser
@@ -81,7 +81,7 @@ function New-PsMenuStatusLine {
         return ''
     }
 
-    return ($parts -join ' · ')
+    return ($parts -join ' | ')
 }
 
 Export-ModuleMember -Function @('New-PsMenuStatusLine')

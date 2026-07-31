@@ -13,13 +13,13 @@ related:
 last_updated: "{{LAST_UPDATED}}"
 ---
 
-# {{PRODUCT_NAME}} — CLI Reference
+# {{PRODUCT_NAME}} - CLI Reference
 
 {{ONE_LINE_PURPOSE}}
 
 **Package version:** {{VERSION}}  
 
-**Related docs:** [README.md](./README.md) · [SECURITY.md](./SECURITY.md)
+**Related docs:** [README.md](./README.md) | [SECURITY.md](./SECURITY.md)
 
 | Item | Value |
 |------|--------|

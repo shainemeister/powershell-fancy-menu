@@ -1,4 +1,4 @@
-# PsMenuKit.Theme — named ConsoleColor palettes and banner helper (PS 5.1)
+# PsMenuKit.Theme - named ConsoleColor palettes and banner helper (PS 5.1)
 
 $script:PsMenuKitCurrentThemeName = 'Default'
 

@@ -1,4 +1,4 @@
-# PsMenuKit — Manual interactive checklist
+# PsMenuKit - Manual interactive checklist
 
 Run on **Windows PowerShell 5.1** with a real console (conhost or Windows Terminal).
 
@@ -15,8 +15,8 @@ demos\Launch.cmd
 | 3 | Enter on **Say hello** | Result shown; key returns to menu |
 | 4 | Open **Tools submenu** | Title shows parent > Tools; Esc returns to parent |
 | 5 | Nested action A or B | Result; return to menu |
-| 6 | **Simulate wipe** → **N** | No wipe output; still in menu |
-| 7 | **Simulate wipe** → **Y** | Simulated wipe success |
+| 6 | **Simulate wipe** -> **N** | No wipe output; still in menu |
+| 7 | **Simulate wipe** -> **Y** | Simulated wipe success |
 | 8 | Type filter characters | List shrinks; Filter line updates |
 | 9 | Backspace | Filter shortens |
 | 10 | Esc with non-empty filter | Filter clears (menu stays) |

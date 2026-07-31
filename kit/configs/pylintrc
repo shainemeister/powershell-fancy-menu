@@ -1,4 +1,4 @@
-# Developer tooling only — not a product runtime dependency.
+# Developer tooling only - not a product runtime dependency.
 # Copy this file to your package or repo root as `.pylintrc`, or pass:
 #   python -m pylint --rcfile=path/to/pylintrc <package_or_paths>
 #
@@ -8,7 +8,7 @@
 #
 # *** ADOPTER ACTION REQUIRED ***
 #   Set py-version below to YOUR project's supported Python version
-#   (e.g. 3.11, 3.12, 3.13). The value 3.13 is a starter default only—
+#   (e.g. 3.11, 3.12, 3.13). The value 3.13 is a starter default only -
 #   it is NOT a kit lock-in. Change it before relying on the gate.
 #
 # Example:

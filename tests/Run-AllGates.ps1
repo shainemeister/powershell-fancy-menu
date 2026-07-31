@@ -45,6 +45,7 @@ function Invoke-Gate {
 
 $gates = @(
     @{ Name = 'Parse-Gate'; Path = (Join-Path $testsRoot 'Parse-Gate.ps1') }
+    @{ Name = 'Encoding.Ascii'; Path = (Join-Path $testsRoot 'Encoding.Ascii.Tests.ps1') }
     @{ Name = 'Core.Model'; Path = (Join-Path $testsRoot 'Core.Model.Tests.ps1') }
     @{ Name = 'Core.Edge'; Path = (Join-Path $testsRoot 'Core.Edge.Tests.ps1') }
     @{ Name = 'Feature.Modules'; Path = (Join-Path $testsRoot 'Feature.Modules.Tests.ps1') }

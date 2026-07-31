@@ -2,7 +2,7 @@
 
 ## Summary
 
-Build **PsMenuKit** — a **dependency-free**, **Windows PowerShell 5.1** modular console menu framework launched via `.cmd`, governed by [repo-kit](https://github.com/shainemeister/repo-kit) **2.0.1** standards. Product code lives **outside** `kit/`; standards live **under** `kit/`. Consumers compose a core engine with optional feature modules.
+Build **PsMenuKit** - a **dependency-free**, **Windows PowerShell 5.1** modular console menu framework launched via `.cmd`, governed by [repo-kit](https://github.com/shainemeister/repo-kit) **2.0.1** standards. Product code lives **outside** `kit/`; standards live **under** `kit/`. Consumers compose a core engine with optional feature modules.
 
 | Decision | Choice |
 |----------|--------|
@@ -15,7 +15,7 @@ Build **PsMenuKit** — a **dependency-free**, **Windows PowerShell 5.1** modula
 ## Goals
 
 1. Reusable public API for menus, navigation, and action dispatch.
-2. Modular by need — small core; import only required feature modules.
+2. Modular by need - small core; import only required feature modules.
 3. Pure PS 5.1 syntax and APIs.
 4. Double-clickable `Launch.cmd` entry.
 5. repo-kit hygiene: authority map, CHANGELOG, inventory, declared gates.
@@ -33,10 +33,10 @@ See repository tree: `kit/` (standards), `packages/PsMenuKit/` (product), `demos
 
 ## Architecture
 
-- **Core** — model, render, keys, loop, dispatch.
-- **Feature modules** (planned / phased) — Theme, Nested, Search, MultiSelect, Confirm, Status, Config.
-- **Composition** — consumer imports Core + optional modules; capability detection for optional item properties.
-- **Config** — prefer `.psd1` menu data; optional JSON via built-in `ConvertFrom-Json`.
+- **Core** - model, render, keys, loop, dispatch.
+- **Feature modules** (planned / phased) - Theme, Nested, Search, MultiSelect, Confirm, Status, Config.
+- **Composition** - consumer imports Core + optional modules; capability detection for optional item properties.
+- **Config** - prefer `.psd1` menu data; optional JSON via built-in `ConvertFrom-Json`.
 
 ## Phases
 

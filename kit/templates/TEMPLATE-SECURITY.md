@@ -14,7 +14,7 @@ related:
 last_updated: "{{LAST_UPDATED}}"
 ---
 
-# {{PRODUCT_NAME}} — Security & Execution Notes
+# {{PRODUCT_NAME}} - Security & Execution Notes
 
 {{ONE_LINE_PURPOSE}}
 
@@ -22,7 +22,7 @@ last_updated: "{{LAST_UPDATED}}"
 **Package folder:** `{{FOLDER_NAME}}/`  
 **Runtime:** {{RUNTIME}}
 
-**Related docs:** [README.md](./README.md) · [CLI-GUIDE.md](./CLI-GUIDE.md)
+**Related docs:** [README.md](./README.md) | [CLI-GUIDE.md](./CLI-GUIDE.md)
 
 ---
 
@@ -50,7 +50,7 @@ last_updated: "{{LAST_UPDATED}}"
 
 ## 1. Purpose of this document
 
-> **Modularity:** Create this file only when the package has an execution surface, network access, elevated privilege, or handles secrets. Docs-only or pure libraries with no runtime side effects may omit `SECURITY.md` entirely—see [Security documentation modularity](../rules/security.md#security-documentation-modularity).
+> **Modularity:** Create this file only when the package has an execution surface, network access, elevated privilege, or handles secrets. Docs-only or pure libraries with no runtime side effects may omit `SECURITY.md` entirely - see [Security documentation modularity](../rules/security.md#security-documentation-modularity).
 
 Summarize:
 

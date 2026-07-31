@@ -1,4 +1,4 @@
-# PsMenuKit.Confirm — Y/N confirmation prompt (PS 5.1)
+# PsMenuKit.Confirm - Y/N confirmation prompt (PS 5.1)
 # Core calls Read-PsMenuConfirm when an item has ConfirmMessage.
 
 function Read-PsMenuConfirm {

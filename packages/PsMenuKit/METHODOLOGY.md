@@ -36,10 +36,10 @@ Consumers **import Core**, optionally import feature modules, build a **menu mod
 ## Layers
 
 ```text
-Launch.cmd → powershell.exe → consumer script
-                                 ├─ Import Core (+ features)
-                                 ├─ Build menu model
-                                 └─ Show-PsMenu loop
+Launch.cmd -> powershell.exe -> consumer script
+                                  Import Core (+ features)
+                                  Build menu model
+                                  Show-PsMenu loop
 ```
 
 | Layer | Responsibility |
@@ -52,11 +52,11 @@ Launch.cmd → powershell.exe → consumer script
 ## Composition rules
 
 1. **Core is always required** for interactive menus.
-2. **Feature modules are optional** — import only what the app needs.
-3. **No circular imports** — feature modules may call Core public functions only.
-4. **Capability detection** — Core uses `Get-Command` for hooks such as `Read-PsMenuConfirm` and `Show-PsMenuNested`.
+2. **Feature modules are optional** - import only what the app needs.
+3. **No circular imports** - feature modules may call Core public functions only.
+4. **Capability detection** - Core uses `Get-Command` for hooks such as `Read-PsMenuConfirm` and `Show-PsMenuNested`.
 5. **Unknown properties are ignored** by Core (forward-compatible models).
-6. **Join at the workflow layer** — compose modules in the consumer script, not by merging engines into one monolithic file.
+6. **Join at the workflow layer** - compose modules in the consumer script, not by merging engines into one monolithic file.
 
 ## Extension style
 
@@ -65,7 +65,7 @@ Launch.cmd → powershell.exe → consumer script
 | Optional item properties | `Children`, `ConfirmMessage` |
 | Optional commands | `Read-PsMenuConfirm`, `Get-PsMenuTheme` |
 | Theme hashtables | ConsoleColor palettes |
-| Config → model | `Import-PsMenuConfig` loads local `.psd1`/JSON into `New-PsMenu` graphs via HandlerMap |
+| Config -> model | `Import-PsMenuConfig` loads local `.psd1`/JSON into `New-PsMenu` graphs via HandlerMap |
 | Security composition | Config is data only; HandlerMap is host-trusted code; prefer `-AllowedRoot` |
 
 ## PS 5.1 constraints

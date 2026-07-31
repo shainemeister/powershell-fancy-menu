@@ -20,7 +20,7 @@ last_updated: "{{LAST_UPDATED}}"
 **Package version:** {{VERSION}}  
 **Folder:** `{{FOLDER_NAME}}/`  
 
-**Related docs:** [CLI-GUIDE.md](./CLI-GUIDE.md) · [SECURITY.md](./SECURITY.md)
+**Related docs:** [CLI-GUIDE.md](./CLI-GUIDE.md) | [SECURITY.md](./SECURITY.md)
 
 ---
 
@@ -28,7 +28,7 @@ last_updated: "{{LAST_UPDATED}}"
 
 {{SUMMARY_PARAGRAPH}}
 
-| You want… | Start here |
+| You want... | Start here |
 |-----------|------------|
 | Quick start | [Recommended workflow](#recommended-workflow) |
 | Commands | [CLI-GUIDE.md](./CLI-GUIDE.md) |

@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    PsMenuKit interactive demo (Windows PowerShell 5.1) — Core + all feature modules.
+    PsMenuKit interactive demo (Windows PowerShell 5.1) - Core + all feature modules.
 .DESCRIPTION
     Launched by Launch.cmd. Demonstrates Theme, Status, Confirm, Nested, Search,
     MultiSelect, and Config composition.
@@ -58,13 +58,13 @@ function Show-DemoResult {
         foreach ($ar in $actions) {
             if ($null -eq $ar) { continue }
             if ($ar.Success) {
-                Write-Host ('Action   : success — {0}' -f $ar.Label) -ForegroundColor Green
+                Write-Host ('Action   : success - {0}' -f $ar.Label) -ForegroundColor Green
                 if ($null -ne $ar.Output) {
                     Write-Host ("Output   : {0}" -f $ar.Output)
                 }
             }
             else {
-                Write-Host ('Action   : failed — {0}' -f $ar.Label) -ForegroundColor Red
+                Write-Host ('Action   : failed - {0}' -f $ar.Label) -ForegroundColor Red
                 if ($null -ne $ar.Error) {
                     Write-Host ("Error    : {0}" -f $ar.Error.Exception.Message) -ForegroundColor Red
                 }
@@ -87,7 +87,7 @@ $handlerMap = @{
     Hello   = { return 'Hello from config-driven HandlerMap.' }
     Time    = { return (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') }
     Version = { return $PSVersionTable.PSVersion.ToString() }
-    About   = { return 'PsMenuKit 0.2.0 — modular pure-PS menu framework.' }
+    About   = { return 'PsMenuKit 0.2.0 - modular pure-PS menu framework.' }
     NestedA = { return 'Nested action A' }
     NestedB = { return 'Nested action B' }
     Wipe    = { return 'Simulated wipe complete (demo).' }

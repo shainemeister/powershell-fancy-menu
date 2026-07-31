@@ -1,4 +1,4 @@
-# PsMenuKit.Search — incremental item filter helpers (PS 5.1)
+# PsMenuKit.Search - incremental item filter helpers (PS 5.1)
 # Core calls Filter-PsMenuItems when this module is imported.
 
 function Select-PsMenuItem {

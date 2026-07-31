@@ -21,7 +21,7 @@ Version surfaces, CHANGELOG discipline, and git / commit rules.
 
 **Document version:** 1.0.1  
 
-**Related:** [RULES.md](../RULES.md) · [UPGRADE.md](../UPGRADE.md) · [CHANGELOG.md](../CHANGELOG.md) · [contracts.md](./contracts.md) · [verification-and-ops.md](./verification-and-ops.md)
+**Related:** [RULES.md](../RULES.md) | [UPGRADE.md](../UPGRADE.md) | [CHANGELOG.md](../CHANGELOG.md) | [contracts.md](./contracts.md) | [verification-and-ops.md](./verification-and-ops.md)
 
 ---
 
@@ -35,7 +35,7 @@ Version surfaces, CHANGELOG discipline, and git / commit rules.
 | Use conventional commits that match staged files | Vague subjects (`update stuff`, `wip`) |
 | Disclose AI assistance when applicable | Rewrite shared published history without coordination |
 
-**Kit upgrades:** follow durable [UPGRADE.md](../UPGRADE.md)—not SETUP after initiation.
+**Kit upgrades:** follow durable [UPGRADE.md](../UPGRADE.md) - not SETUP after initiation.
 
 ---
 
@@ -60,16 +60,16 @@ Version surfaces, CHANGELOG discipline, and git / commit rules.
 | Surface | What it is | Authority |
 |---------|------------|-----------|
 | **Kit version** | Semver of the Repository Standards Kit as a whole | Upstream [kit/CHANGELOG.md](https://github.com/shainemeister/repo-kit/blob/main/kit/CHANGELOG.md) dated sections (`### [X.Y.Z] - YYYY-MM-DD`) under `## repo-kit` |
-| **Project / package version** | The adopting repo’s product or library semver | Project packaging metadata **and** project root `CHANGELOG.md` |
-| **Document version** | Per-document frontmatter `version` + `last_updated` | That document only—not automatically equal to package or kit version |
+| **Project / package version** | The adopting repo's product or library semver | Project packaging metadata **and** project root `CHANGELOG.md` |
+| **Document version** | Per-document frontmatter `version` + `last_updated` | That document only - not automatically equal to package or kit version |
 
 | Surface | When to bump |
 |---------|----------------|
 | Package / library version | CLI contract, public API, scoring/export behavior, or stable output field names change |
-| Document frontmatter `version` + `last_updated` | That document’s guidance or contract changes |
+| Document frontmatter `version` + `last_updated` | That document's guidance or contract changes |
 | Methodology **Document history** table | Material formula or interpretation changes |
 | Project `CHANGELOG.md` | See [Mandatory project CHANGELOG](#mandatory-project-changelog) |
-| Kit baseline (adopted kit version) | On first adopt and every kit upgrade — see [Kit baseline](../RULES.md#kit-baseline) |
+| Kit baseline (adopted kit version) | On first adopt and every kit upgrade - see [Kit baseline](../RULES.md#kit-baseline) |
 
 ---
 
@@ -79,9 +79,9 @@ Every repository that adopts this kit **must** maintain a root **`CHANGELOG.md`*
 
 | Rule | Detail |
 |------|--------|
-| **Required file** | **Project root** `CHANGELOG.md` — listed in the [authority map](../RULES.md#authority-map) and [hygiene](./hygiene.md); standards stay under `kit/` |
+| **Required file** | **Project root** `CHANGELOG.md` - listed in the [authority map](../RULES.md#authority-map) and [hygiene](./hygiene.md); standards stay under `kit/` |
 | **Format** | [Keep a Changelog](https://keepachangelog.com/) categories; dates ISO 8601 (`YYYY-MM-DD`) |
-| **Structure** | `## <Repository Name>` → dated `### [X.Y.Z] - YYYY-MM-DD` → `#### Added` / `#### Changed` / … |
+| **Structure** | `## <Repository Name>` -> dated `### [X.Y.Z] - YYYY-MM-DD` -> `#### Added` / `#### Changed` / ... |
 | **Categories** | Use as needed: **Added**, **Changed**, **Deprecated**, **Removed**, **Fixed**, **Security** |
 | **Same change set** | Release-worthy behavior or contract changes include the CHANGELOG entry with the code/docs that ship them |
 
@@ -91,7 +91,7 @@ There is **no Unreleased section**. Record each change under the `### [X.Y.Z]` v
 
 | Change | CHANGELOG |
 |--------|-----------|
-| Package / public contract version bump | **Required** — matching `### [X.Y.Z]` under the repository H2 |
+| Package / public contract version bump | **Required** - matching `### [X.Y.Z]` under the repository H2 |
 | Behavior, CLI, API, schema, security-model change | **Required** under the version section that ships the change |
 | Kit adoption or kit upgrade | **Required** (note kit version; do **not** paste kit release history) |
 | Security fix | **Required** |
@@ -103,9 +103,9 @@ There is **no Unreleased section**. Record each change under the `### [X.Y.Z]` v
 
 ## Kit baseline and upgrades
 
-Fill and keep the [Kit baseline](../RULES.md#kit-baseline) table in every adopting project’s **`kit/RULES.md`**. Update it on every kit upgrade.
+Fill and keep the [Kit baseline](../RULES.md#kit-baseline) table in every adopting project's **`kit/RULES.md`**. Update it on every kit upgrade.
 
-**Procedure (do not duplicate here):** [UPGRADE.md](../UPGRADE.md) — routine upgrade, 1.x → 2.0 migration, merge options, AI prompts.
+**Procedure (do not duplicate here):** [UPGRADE.md](../UPGRADE.md) - routine upgrade, 1.x -> 2.0 migration, merge options, AI prompts.
 
 After initiation, `SETUP.md` is gone. Kit baseline + UPGRADE keep upgrades trackable.
 
@@ -117,7 +117,7 @@ After initiation, `SETUP.md` is gone. Kit baseline + UPGRADE keep upgrades track
 2. Docs that cite a product version must stay aligned with the code version they describe.  
 3. Prefer **backward-compatible** additions (new columns, new optional flags) over silent renames. Breaking changes require explicit notes in the CLI/API guide, history, and CHANGELOG.  
 4. Design / concept docs may advance without implementing code; label implementation status clearly.  
-5. Behavior or contract changes, their **canonical** docs, the appropriate **version bump**, and the **CHANGELOG** entry belong in the **same change set** when the change is release-worthy — see [contracts.md](./contracts.md).  
+5. Behavior or contract changes, their **canonical** docs, the appropriate **version bump**, and the **CHANGELOG** entry belong in the **same change set** when the change is release-worthy - see [contracts.md](./contracts.md).  
 6. Kit version and project/package version are **independent**. Adopting a new kit does not force a product version bump unless product behavior also changes.
 
 ---
@@ -133,25 +133,25 @@ After initiation, `SETUP.md` is gone. Kit baseline + UPGRADE keep upgrades track
 | Docs, templates, `.gitignore`, style configs | `.env`, secrets, IDE-only folders already ignored |
 | | Generated diagnostics or certificates meant to be local |
 
-Respect `.gitignore`. Do not force-add ignored generated artifacts “for convenience.”
+Respect `.gitignore`. Do not force-add ignored generated artifacts "for convenience."
 
 ### Commits and history
 
 1. **Review before commit:** `git status` and `git diff`. Confirm no accidental large dumps, credentials, or regenerable artifacts.  
-2. **Small, focused commits** preferred over mixed unrelated changes—one logical concern / one authority-map surface when practical. Prefer a **short stack** over a single mixed mega-commit.  
+2. **Small, focused commits** preferred over mixed unrelated changes - one logical concern / one authority-map surface when practical. Prefer a **short stack** over a single mixed mega-commit.  
 3. **Messages** follow [Commit message format](#commit-message-format) below.  
 4. **Do not rewrite published shared history** (`push --force` to a shared default branch) without explicit coordination.  
-5. **Branches (recommended):** `feature/…`, `fix/…`, `docs/…` when work is non-trivial.  
+5. **Branches (recommended):** `feature/...`, `fix/...`, `docs/...` when work is non-trivial.  
 6. **Contract-breaking changes:** prefer review (PR) when a remote exists; call out migration notes in the commit or PR body.  
-7. **No secrets in history.** If leaked, rotate credentials and treat history cleanup as an incident—not a casual amend.
+7. **No secrets in history.** If leaked, rotate credentials and treat history cleanup as an incident - not a casual amend.
 
 ---
 
 ## Commit message format
 
-**Principle:** The commit subject (and body, when present) should remain understandable **years later** when searching history—name the real surface and intent, not a temporary mood.
+**Principle:** The commit subject (and body, when present) should remain understandable **years later** when searching history - name the real surface and intent, not a temporary mood.
 
-Use a **Conventional Commits–style** subject so history stays scannable.
+Use a **Conventional Commits-style** subject so history stays scannable.
 
 ```text
 <type>(<scope>): <imperative summary>
@@ -161,7 +161,7 @@ Use a **Conventional Commits–style** subject so history stays scannable.
 |------|------|
 | **type** | One of the types in the table below |
 | **scope** | Package or area; see [Scope conventions](#scope-conventions). Omit for true repo-wide root files when no better scope fits |
-| **summary** | Imperative mood, specific, ≤ ~72 characters; no trailing period |
+| **summary** | Imperative mood, specific, <= ~72 characters; no trailing period |
 | **body** (optional) | For non-trivial commits: **why** the change matters and any **migration** notes; link to the canonical doc if non-obvious. Tiny one-line docs fixes may omit a body |
 
 | type | Use when |
@@ -179,7 +179,7 @@ Use a **Conventional Commits–style** subject so history stays scannable.
 |---------|------------------|--------|
 | **This kit** | `rules`, `markdown`, `templates`, `setup`, `upgrade`, `examples`, `kit` | Use when the change is limited to that surface |
 | **Adopting projects** | Package folder name, `cli`, `security`, `methodology` | Or omit for root-wide policy/README/shared schema |
-| **Omit scope** | — | Root-wide files with no single package owner |
+| **Omit scope** | - | Root-wide files with no single package owner |
 
 Scopes are advisory: consistency within a repo matters more than matching this table exactly.
 
@@ -200,9 +200,9 @@ When an AI system meaningfully assists with the **change itself** (code, docs, c
 
 | Trailer | Required content |
 |---------|------------------|
-| `Assisted-by:` | AI make / model (and optional tool) that assisted **this** commit — fill at commit time |
+| `Assisted-by:` | AI make / model (and optional tool) that assisted **this** commit - fill at commit time |
 | `Compliance:` | Explicit reference to maintenance rules (`RULES.md` or this module set) |
-| `Instructed-by:` | Directing human — **value of** `git config user.name` for the committer |
+| `Instructed-by:` | Directing human - **value of** `git config user.name` for the committer |
 
 **Template form** (copy structure; resolve fields at commit time):
 
@@ -276,14 +276,14 @@ fix(cli): retry failed remote call with backoff
 docs(rules): clarify non-Python style gate expectations
 ```
 
-**Bad → good:**
+**Bad -> good:**
 
 | Avoid | Prefer |
 |-------|--------|
 | `update stuff` | `docs(my-cli): document validate exit codes` |
 | `wip` | Finish, then commit a clear subject |
 | `fix bugs` | `fix(my-cli): handle missing config path without traceback` |
-| `feat: updates` (docs-only staged) | `docs: …` — do not use `feat` for documentation-only changes |
+| `feat: updates` (docs-only staged) | `docs: ...` - do not use `feat` for documentation-only changes |
 
 **Multi-commit stack example:**
 
@@ -305,7 +305,7 @@ Commit messages and **what is staged** must stay consistent with the documentati
 | Prefer readability of history | Prefer **one logical surface per commit** |
 | Code + matching docs for one feature | Either (a) one commit with code **and** its canonical docs, or (b) a short stack |
 | Path add/remove/rename | Include inventory/catalog update when the project maintains one |
-| Package version bump | Subject uses `chore(<scope>): bump … to X.Y.Z` |
+| Package version bump | Subject uses `chore(<scope>): bump ... to X.Y.Z` |
 | Docs-only edits | Use `docs` / `docs(<scope>)`. Do not use `feat` for documentation |
 
 **Pre-commit message check:**
@@ -335,7 +335,7 @@ git status
 
 On Windows Command Prompt, path separators may be `\`; Git accepts `/` in paths on all common platforms. Stage one focused surface (or one logical pair) per commit.
 
-For a multi-file feature, a typical stack is: implementation → package version → docs → inventory / RULES if those changed.
+For a multi-file feature, a typical stack is: implementation -> package version -> docs -> inventory / RULES if those changed.
 
 ---
 

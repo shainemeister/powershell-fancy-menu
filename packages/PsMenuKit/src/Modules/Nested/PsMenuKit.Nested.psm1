@@ -1,4 +1,4 @@
-# PsMenuKit.Nested — submenu navigation with breadcrumb titles (PS 5.1)
+# PsMenuKit.Nested - submenu navigation with breadcrumb titles (PS 5.1)
 # Core calls Show-PsMenuNested when an item has Children.
 
 function Show-PsMenuNested {
