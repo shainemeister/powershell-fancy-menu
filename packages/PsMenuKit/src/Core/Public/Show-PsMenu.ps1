@@ -6,6 +6,9 @@ function Show-PsMenu {
         Core menu: arrow keys, Enter, Esc/Q, number jump, hotkeys.
         Optional feature modules enhance behavior when imported:
         Confirm, Nested, Search, MultiSelect, Theme, Status.
+
+        Console title and cursor visibility are restored on exit (best effort).
+        Ctrl+C may terminate the pipeline before restore on some hosts.
     .PARAMETER Menu
         Menu model from New-PsMenu.
     .PARAMETER Theme
@@ -14,6 +17,10 @@ function Show-PsMenu {
         Optional status text under the title (Status module may build this).
     .PARAMETER ClearOnExit
         Clear the screen when the loop ends (default $true).
+    .PARAMETER NestDepth
+        Current nested depth (used with Nested module; default 0).
+    .PARAMETER MaxNestDepth
+        Maximum nested submenu depth (default 8).
     .OUTPUTS
         PsMenuKit.MenuResult
     #>
@@ -31,44 +38,62 @@ function Show-PsMenu {
         [string]$StatusLine,
 
         [Parameter(Mandatory = $false)]
-        [bool]$ClearOnExit = $true
+        [bool]$ClearOnExit = $true,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0, 64)]
+        [int]$NestDepth = 0,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 64)]
+        [int]$MaxNestDepth = 8
     )
 
-    $themeTable = Resolve-PsMenuTheme -Theme $Theme -MenuTheme $Menu.Theme
-    $allItems = @($Menu.Items)
-    if ($allItems.Count -eq 0) {
-        return New-PsMenuResult -Cancelled $true -Reason 'EmptyMenu'
-    }
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = 'Stop'
 
-    $searchEnabled = $null -ne (Get-Command -Name 'Select-PsMenuItem' -ErrorAction SilentlyContinue)
-    $multiAvailable = $null -ne (Get-Command -Name 'Set-PsMenuItemSelection' -ErrorAction SilentlyContinue)
-    $multiSelectMode = $false
-    if ($multiAvailable -and $null -ne $Menu.PSObject.Properties['MultiSelect'] -and [bool]$Menu.MultiSelect) {
-        $multiSelectMode = $true
-    }
-
-    $filterText = ''
-    $visibleItems = Get-PsMenuVisibleItems -AllItems $allItems -FilterText $filterText -SearchEnabled $searchEnabled
-    $selectedIndex = Get-PsMenuFirstEnabledIndex -Items $visibleItems
-
-    $ui = $Host.UI.RawUI
-    $oldTitle = $null
-    try {
-        $oldTitle = $ui.WindowTitle
-        $ui.WindowTitle = $Menu.Title
-    }
-    catch { }
-
-    $cursorVisible = $true
-    try {
-        $cursorVisible = [Console]::CursorVisible
-        [Console]::CursorVisible = $false
-    }
-    catch { }
-
+    $consoleState = $null
     $finalResult = $null
 
     try {
+        $themeTable = Resolve-PsMenuTheme -Theme $Theme -MenuTheme $Menu.Theme
+
+        $rawItems = $null
+        if ($null -ne $Menu.PSObject.Properties['Items']) {
+            $rawItems = $Menu.Items
+        }
+        if ($null -eq $rawItems) {
+            return New-PsMenuResult -Cancelled $true -Reason 'EmptyMenu'
+        }
+
+        $allItems = @($rawItems)
+        if ($allItems.Count -eq 0) {
+            return New-PsMenuResult -Cancelled $true -Reason 'EmptyMenu'
+        }
+
+        $searchEnabled = $null -ne (Get-Command -Name 'Select-PsMenuItem' -ErrorAction SilentlyContinue)
+        $multiAvailable = $null -ne (Get-Command -Name 'Set-PsMenuItemSelection' -ErrorAction SilentlyContinue)
+        $multiSelectMode = $false
+        if ($multiAvailable -and $null -ne $Menu.PSObject.Properties['MultiSelect'] -and [bool]$Menu.MultiSelect) {
+            $multiSelectMode = $true
+        }
+
+        $filterText = ''
+        $visibleItems = Get-PsMenuVisibleItems -AllItems $allItems -FilterText $filterText -SearchEnabled $searchEnabled
+        $selectedIndex = Get-PsMenuFirstEnabledIndex -Items $visibleItems
+
+        $consoleState = Save-PsMenuConsoleState
+        try {
+            if ($consoleState['CapturedTitle']) {
+                $Host.UI.RawUI.WindowTitle = [string]$Menu.Title
+            }
+        }
+        catch { }
+        try {
+            [Console]::CursorVisible = $false
+        }
+        catch { }
+
         while ($true) {
             $visibleItems = Get-PsMenuVisibleItems -AllItems $allItems -FilterText $filterText -SearchEnabled $searchEnabled
             if ($visibleItems.Count -eq 0) {
@@ -76,6 +101,9 @@ function Show-PsMenu {
             }
             elseif ($selectedIndex -ge $visibleItems.Count) {
                 $selectedIndex = Get-PsMenuFirstEnabledIndex -Items $visibleItems
+            }
+            elseif ($selectedIndex -lt 0) {
+                $selectedIndex = 0
             }
 
             Show-PsMenuFrame -Menu $Menu -VisibleItems $visibleItems -SelectedIndex $selectedIndex `
@@ -86,7 +114,6 @@ function Show-PsMenu {
             $key = $keyInfo.Key
             $keyChar = $keyInfo.KeyChar
 
-            # Quit (Esc always; Q only when not typing a filter that could use q as hotkey-only)
             if ($key -eq [ConsoleKey]::Escape) {
                 if ($searchEnabled -and -not [string]::IsNullOrEmpty($filterText)) {
                     $filterText = ''
@@ -97,7 +124,6 @@ function Show-PsMenu {
                 break
             }
 
-            # Navigation
             if ($key -eq [ConsoleKey]::UpArrow) {
                 if ($visibleItems.Count -gt 0) {
                     $selectedIndex = Move-PsMenuSelection -Items $visibleItems -CurrentIndex $selectedIndex -Delta -1
@@ -111,7 +137,6 @@ function Show-PsMenu {
                 continue
             }
 
-            # Backspace clears filter char
             if ($searchEnabled -and ($key -eq [ConsoleKey]::Backspace)) {
                 if ($filterText.Length -gt 0) {
                     $filterText = $filterText.Substring(0, $filterText.Length - 1)
@@ -120,19 +145,16 @@ function Show-PsMenu {
                 continue
             }
 
-            # MultiSelect Space toggle
             if ($multiSelectMode -and $key -eq [ConsoleKey]::Spacebar) {
                 if ($visibleItems.Count -gt 0 -and $selectedIndex -ge 0 -and $selectedIndex -lt $visibleItems.Count) {
                     $item = $visibleItems[$selectedIndex]
-                    $en = Test-PsMenuItemEnabled -Item $item
-                    if ($en) {
+                    if (Test-PsMenuItemEnabled -Item $item) {
                         $null = Set-PsMenuItemSelection -Item $item -Toggle
                     }
                 }
                 continue
             }
 
-            # Activate Enter
             if ($key -eq [ConsoleKey]::Enter -or $keyChar -eq "`r" -or $keyChar -eq "`n") {
                 if ($visibleItems.Count -eq 0) {
                     continue
@@ -141,16 +163,14 @@ function Show-PsMenu {
                 if ($multiSelectMode) {
                     $selectedItems = @(Get-PsMenuSelectedItems -Items $allItems)
                     if ($selectedItems.Count -eq 0) {
-                        # No toggles — activate focused item like single-select
                         $item = $visibleItems[$selectedIndex]
                         if (-not (Test-PsMenuItemEnabled -Item $item)) { continue }
-                        $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable
+                        $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
                         if ($act.Continue) { continue }
                         $finalResult = $act.Result
                         break
                     }
 
-                    # Confirm batch if any item has ConfirmMessage
                     $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
                     $batchCancelled = $false
                     foreach ($si in $selectedItems) {
@@ -172,27 +192,18 @@ function Show-PsMenu {
                     }
                     $ids = @($selectedItems | ForEach-Object { $_.Id })
                     $labels = @($selectedItems | ForEach-Object { $_.Label })
-                    $finalResult = [pscustomobject]@{
-                        PSTypeName   = 'PsMenuKit.MenuResult'
-                        Cancelled    = $false
-                        ItemId       = ($ids -join ',')
-                        Label        = ($labels -join ', ')
-                        ActionResult = @($batchResults.ToArray())
-                        Reason       = 'MultiSelected'
-                        Selections   = @($selectedItems)
-                    }
+                    $finalResult = New-PsMenuResult -Cancelled $false -Reason 'MultiSelected' -ItemId ($ids -join ',') -Label ($labels -join ', ') -ActionResult @($batchResults.ToArray()) -Selections @($selectedItems)
                     break
                 }
 
                 $item = $visibleItems[$selectedIndex]
                 if (-not (Test-PsMenuItemEnabled -Item $item)) { continue }
-                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable
+                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
                 if ($act.Continue) { continue }
                 $finalResult = $act.Result
                 break
             }
 
-            # Printable character handling
             if ($null -ne $keyChar -and $keyChar -ne [char]0 -and
                 $key -ne [ConsoleKey]::Enter -and
                 $keyChar -ne "`r" -and $keyChar -ne "`n" -and
@@ -200,16 +211,14 @@ function Show-PsMenu {
 
                 $ch = ([string]$keyChar)
 
-                # Q quits only when filter empty (and not building filter)
                 if (-not $searchEnabled -or [string]::IsNullOrEmpty($filterText)) {
                     if ($ch -eq 'q' -or $ch -eq 'Q') {
-                        # Prefer hotkey match on 'q' first
                         $hotIdx = Find-PsMenuHotkeyIndex -Items $visibleItems -HotkeyChar $ch
                         if ($hotIdx -ge 0) {
                             $selectedIndex = $hotIdx
                             if (-not $multiSelectMode) {
                                 $item = $visibleItems[$selectedIndex]
-                                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable
+                                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
                                 if (-not $act.Continue) {
                                     $finalResult = $act.Result
                                     break
@@ -222,7 +231,6 @@ function Show-PsMenu {
                     }
                 }
 
-                # Number jump when filter empty
                 if ((-not $searchEnabled -or [string]::IsNullOrEmpty($filterText)) -and $ch -match '^[1-9]$') {
                     $num = [int]$ch
                     $target = $num - 1
@@ -232,14 +240,13 @@ function Show-PsMenu {
                     continue
                 }
 
-                # Hotkeys when filter empty (non-search or empty filter)
                 if (-not $searchEnabled -or [string]::IsNullOrEmpty($filterText)) {
                     $hotIdx = Find-PsMenuHotkeyIndex -Items $visibleItems -HotkeyChar $ch
                     if ($hotIdx -ge 0) {
                         $selectedIndex = $hotIdx
                         if (-not $multiSelectMode) {
                             $item = $visibleItems[$selectedIndex]
-                            $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable
+                            $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
                             if (-not $act.Continue) {
                                 $finalResult = $act.Result
                                 break
@@ -249,7 +256,6 @@ function Show-PsMenu {
                     }
                 }
 
-                # Search: append to filter
                 if ($searchEnabled) {
                     $filterText = $filterText + $ch
                     $selectedIndex = Get-PsMenuFirstEnabledIndex -Items (Get-PsMenuVisibleItems -AllItems $allItems -FilterText $filterText -SearchEnabled $searchEnabled)
@@ -258,12 +264,17 @@ function Show-PsMenu {
             }
         }
     }
+    catch {
+        # Ensure callers see a structured failure rather than a naked exception when possible
+        $finalResult = New-PsMenuResult -Cancelled $true -Reason 'Error'
+        $finalResult | Add-Member -NotePropertyName Error -NotePropertyValue $_ -Force
+        throw
+    }
     finally {
-        try { [Console]::CursorVisible = $cursorVisible } catch { }
-        try {
-            if ($null -ne $oldTitle) { $ui.WindowTitle = $oldTitle }
-        } catch { }
-        if ($ClearOnExit) { Clear-Host }
+        if ($null -ne $consoleState) {
+            Restore-PsMenuConsoleState -State $consoleState -ClearOnExit $ClearOnExit
+        }
+        $ErrorActionPreference = $prevEap
     }
 
     if ($null -eq $finalResult) {
@@ -311,6 +322,9 @@ function Get-PsMenuVisibleItems {
         [bool]$SearchEnabled
     )
 
+    if ($null -eq $AllItems) {
+        return @()
+    }
     if ($SearchEnabled -and -not [string]::IsNullOrEmpty($FilterText)) {
         return @(Select-PsMenuItem -Items $AllItems -Query $FilterText)
     }
@@ -334,6 +348,7 @@ function Test-PsMenuItemEnabled {
     [OutputType([bool])]
     param([pscustomobject]$Item)
 
+    if ($null -eq $Item) { return $false }
     if ($null -ne $Item.PSObject.Properties['Enabled']) {
         return [bool]$Item.Enabled
     }
@@ -348,6 +363,7 @@ function Find-PsMenuHotkeyIndex {
         [string]$HotkeyChar
     )
 
+    if ($null -eq $Items) { return -1 }
     $ch = $HotkeyChar.ToLowerInvariant()
     for ($i = 0; $i -lt $Items.Count; $i++) {
         $hk = $null
@@ -366,10 +382,11 @@ function Invoke-PsMenuActivateItem {
     param(
         [pscustomobject]$Menu,
         [pscustomobject]$Item,
-        [hashtable]$ThemeTable
+        [hashtable]$ThemeTable,
+        [int]$NestDepth = 0,
+        [int]$MaxNestDepth = 8
     )
 
-    # Confirm hook
     $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
     $confirmMsg = $null
     if ($null -ne $Item.PSObject.Properties['ConfirmMessage']) {
@@ -382,17 +399,22 @@ function Invoke-PsMenuActivateItem {
         }
     }
 
-    # Nested hook
     $hasChildren = $false
     if ($null -ne $Item.PSObject.Properties['Children'] -and $null -ne $Item.Children -and @($Item.Children).Count -gt 0) {
         $hasChildren = $true
     }
     $nestedCmd = Get-Command -Name 'Show-PsMenuNested' -ErrorAction SilentlyContinue
     if ($hasChildren -and $null -ne $nestedCmd) {
-        $nestedResult = & $nestedCmd -ParentMenu $Menu -Item $Item -Theme $ThemeTable
+        $nextDepth = $NestDepth + 1
+        if ($nextDepth -gt $MaxNestDepth) {
+            # Stay on parent menu; do not open another level
+            return [pscustomobject]@{ Continue = $true; Result = $null }
+        }
+        $nestedResult = & $nestedCmd -ParentMenu $Menu -Item $Item -Theme $ThemeTable -NestDepth $nextDepth -MaxNestDepth $MaxNestDepth
         if ($null -ne $nestedResult -and -not $nestedResult.Cancelled) {
             return [pscustomobject]@{ Continue = $false; Result = $nestedResult }
         }
+        # NestedDepthExceeded / EmptyChildren / UserQuit from child → redraw parent
         return [pscustomobject]@{ Continue = $true; Result = $null }
     }
 
@@ -440,15 +462,7 @@ function Complete-PsMenuSelection {
     )
 
     $actionResult = Invoke-PsMenuItemAction -Item $Item
-    return [pscustomobject]@{
-        PSTypeName   = 'PsMenuKit.MenuResult'
-        Cancelled    = $false
-        ItemId       = $Item.Id
-        Label        = $Item.Label
-        ActionResult = $actionResult
-        Reason       = 'Selected'
-        Selections   = @($Item)
-    }
+    return New-PsMenuResult -Cancelled $false -Reason 'Selected' -ItemId $Item.Id -Label $Item.Label -ActionResult $actionResult -Selections @($Item)
 }
 
 function New-PsMenuResult {
@@ -458,8 +472,13 @@ function New-PsMenuResult {
         [string]$Reason = '',
         [string]$ItemId = $null,
         [string]$Label = $null,
-        [object]$ActionResult = $null
+        [object]$ActionResult = $null,
+        [object[]]$Selections
     )
+
+    if (-not $PSBoundParameters.ContainsKey('Selections') -or $null -eq $Selections) {
+        $Selections = @()
+    }
 
     return [pscustomobject]@{
         PSTypeName   = 'PsMenuKit.MenuResult'
@@ -468,6 +487,6 @@ function New-PsMenuResult {
         Label        = $Label
         ActionResult = $ActionResult
         Reason       = $Reason
-        Selections   = @()
+        Selections   = @($Selections)
     }
 }

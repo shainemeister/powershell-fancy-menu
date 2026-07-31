@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit Security
 description: Trust boundary, unacceptable patterns, IT allowances, and validation for the pure-PowerShell menu kit.
-version: "0.2.1"
+version: "0.3.0"
 status: current
 audience:
   - security
@@ -15,6 +15,8 @@ related:
   - ../../kit/rules/security.md
   - ../../demos/Launch.cmd
   - ../../demos/Launch.Enterprise.cmd
+  - ../../tests/MANUAL.md
+  - ../../tests/Run-AllGates.ps1
 last_updated: "2026-07-30"
 ---
 
@@ -22,7 +24,7 @@ last_updated: "2026-07-30"
 
 Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free interactive console menu framework for **Windows PowerShell 5.1**.
 
-**Package version:** 0.2.1  
+**Package version:** 0.3.0  
 **Package folder:** `packages/PsMenuKit/`  
 **Runtime:** Windows PowerShell 5.1 (`powershell.exe`) — zero product runtime dependencies
 
@@ -46,8 +48,9 @@ Aligned with repo-kit security baseline: privilege, network, secrets, dependenci
 4. [Unacceptable patterns](#3-unacceptable-patterns)
 5. [Required allowances](#4-required-allowances)
 6. [Runtime restrictions](#5-runtime-restrictions)
-7. [Config and HandlerMap trust](#6-config-and-handlermap-trust)
-8. [Launcher policy](#7-launcher-policy)
+7. [Supported environments](#6-supported-environments)
+8. [Config and HandlerMap trust](#7-config-and-handlermap-trust)
+9. [Launcher policy](#8-launcher-policy)
 9. [Recommended validation](#8-recommended-validation)
 10. [Audit snapshot](#9-audit-snapshot)
 11. [Statement for reviewers](#10-statement-for-reviewers)
@@ -147,10 +150,27 @@ Current user session → host script (trusted HandlerMap)
 | Config allowlist | `-AllowedRoot` recommended for enterprise hosts |
 | Handler binding | Name → host HandlerMap only; missing handler ⇒ no action unless host sets DefaultAction |
 | Secrets | Do not place secrets in menu labels, config, Meta, or status lines |
+| Nested depth | Default max depth **8** (fail soft / stay on parent) |
+| Console restore | Title + cursor restored on normal exit (best effort on Ctrl+C) |
 
 ---
 
-## 6. Config and HandlerMap trust
+## 6. Supported environments
+
+| Environment | Interactive menus | Config load | Notes |
+|-------------|-------------------|-------------|-------|
+| Windows PowerShell **5.1**, Full Language Mode, console host | **Supported** | **Supported** | Primary target |
+| Windows Terminal hosting 5.1 | **Supported** | **Supported** | Preferred UX |
+| Constrained Language Mode | **Limited** | **Likely OK** (data) | Host scriptblocks/actions may be restricted. **Do not** disable CLM as an install step. |
+| Non-interactive / no RawUI console | **Unsupported** | Config-only hosts OK | `Show-PsMenu` needs keyboard input |
+| PowerShell 7+ | Best effort | Best effort | Not first-class in 0.3.0 |
+| Remote PSSession without interactive console | **Unsupported** | N/A | |
+
+**Honesty rules:** never document permanent ExecutionPolicy Unrestricted, CLM disable, or AV/AMSI disable as product requirements.
+
+---
+
+## 7. Config and HandlerMap trust
 
 | Concept | Trust level | Notes |
 |---------|-------------|-------|
@@ -163,7 +183,7 @@ Current user session → host script (trusted HandlerMap)
 
 ---
 
-## 7. Launcher policy
+## 8. Launcher policy
 
 ### Demo (lab / developer)
 
@@ -196,27 +216,29 @@ Production hosts should:
 
 ---
 
-## 8. Recommended validation
+## 9. Recommended validation
 
 Developer tooling only — not product runtime dependencies. Declared Domain B/A gates live in [kit/RULES.md](../../kit/RULES.md).
 
-**Windows (PowerShell 5.1)**
+**Primary (all required smokes)**
 
 ```bat
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Parse-Gate.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Core.Model.Tests.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Feature.Modules.Tests.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Security.BanList.Tests.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Security.Config.Tests.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
 ```
 
-**Domain A (when PSScriptAnalyzer is installed)**
+**Interactive checklist:** [tests/MANUAL.md](../../tests/MANUAL.md)
 
-```powershell
-Import-Module PSScriptAnalyzer
-Invoke-ScriptAnalyzer -Path packages,demos,tests -Recurse -Severity Error
-# Pass = zero Error findings (exit code 0 from wrapper / no Error results)
+**Domain A analyzer wrapper**
+
+```bat
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-ScriptAnalyzer.ps1
 ```
+
+- Exit **0** = zero Error findings  
+- Exit **2** = module not installed (skip)  
+- Exit **1** = findings or require-module failure  
+
+Install (developer only): `Install-Module PSScriptAnalyzer -Scope CurrentUser`
 
 **Optional secrets scan (when Gitleaks is adopted)**
 
@@ -226,7 +248,7 @@ gitleaks detect --source .
 
 ---
 
-## 9. Audit snapshot
+## 10. Audit snapshot
 
 | Decision | Rationale |
 |----------|-----------|
@@ -239,13 +261,13 @@ gitleaks detect --source .
 
 ---
 
-## 10. Statement for reviewers
+## 11. Statement for reviewers
 
 > PsMenuKit is a **local, current-user, offline** PowerShell console menu framework with **no product runtime dependencies**. It does not elevate privileges, phone home, or execute menu configuration files as code. Executable behavior is limited to **host-supplied scriptblocks**. Demo `-ExecutionPolicy Bypass` is for local lab use; enterprise deployments should use approved paths, preferred signing policy, and `Import-PsMenuConfig -AllowedRoot`. This document is a **self-attested trust description**, not a third-party certification.
 
 ---
 
-## 11. Related files
+## 12. Related files
 
 | Path | Role |
 |------|------|
@@ -253,6 +275,9 @@ gitleaks detect --source .
 | `demos/Launch.cmd` | Demo launcher (Bypass, local) |
 | `demos/Launch.Enterprise.cmd` | Enterprise-oriented launcher pattern |
 | `demos/menus/sample.menu.psd1` | Sample config (no secrets) |
+| `tests/Run-AllGates.ps1` | Single Domain B + kit security gate entrypoint |
+| `tests/Run-ScriptAnalyzer.ps1` | Domain A wrapper |
+| `tests/MANUAL.md` | Interactive checklist |
 | `tests/Security.BanList.Tests.ps1` | Banned API scan |
 | `tests/Security.Config.Tests.ps1` | Config path / schema negatives |
 | `kit/RULES.md` | Inventory + verification table |
@@ -260,9 +285,10 @@ gitleaks detect --source .
 
 ---
 
-## 12. Document history
+## 13. Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.3.0 | Supported environments matrix; Run-AllGates validation; console restore notes |
 | 0.2.1 | Full TEMPLATE-SECURITY shape; enterprise launcher; Config controls; validation gates |
 | 0.1.0 | Initial trust boundary for Core + demo launcher |

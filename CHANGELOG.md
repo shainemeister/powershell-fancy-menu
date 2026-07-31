@@ -8,6 +8,31 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.3.0] - 2026-07-30
+
+#### Added
+
+- Phase 3 hardening and verification:
+  - Console state save/restore helpers (`Save`/`Restore-PsMenuConsoleState`)
+  - `Get-PsMenuDisplayText` truncation for long labels/titles
+  - Nested max depth (default 8) via `NestDepth` / `MaxNestDepth`
+  - `tests/Run-AllGates.ps1` single gate entrypoint
+  - `tests/Run-ScriptAnalyzer.ps1` Domain A wrapper
+  - `tests/Core.Edge.Tests.ps1` and `tests/MANUAL.md`
+- Supported environments matrix in SECURITY.md
+
+#### Changed
+
+- `New-PsMenu` allows empty `Items` collections
+- `Show-PsMenu` restores title/cursor; localizes `$ErrorActionPreference`
+- MenuResult always includes `Selections`
+- kit/RULES verification points at Run-AllGates
+- Package/module versions **0.3.0**
+
+#### Fixed
+
+- Edge paths for empty menus and depth limits without interactive crashes
+
 ### [0.2.1] - 2026-07-30
 
 #### Added

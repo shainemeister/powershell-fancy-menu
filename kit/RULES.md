@@ -115,10 +115,10 @@ Replace paths below with your project’s real files. Rows that do not apply may
 
 | Change type | Minimum verification |
 |-------------|----------------------|
-| Core / module behavior | `demos\Launch.cmd` — navigate, select, quit on Windows PowerShell 5.1 |
+| Core / module behavior | `demos\Launch.cmd` + [tests/MANUAL.md](../tests/MANUAL.md) critical path |
 | Public API | Contract in CLI-GUIDE matches exports; smoke import in demo |
-| Domain B (PowerShell) | `powershell.exe -NoProfile -File tests\Parse-Gate.ps1` exit 0; model + feature tests exit 0 |
-| Domain A (PowerShell) | `tests\Security.BanList.Tests.ps1` exit 0; `tests\Security.Config.Tests.ps1` exit 0; `Invoke-ScriptAnalyzer -Path packages,demos,tests -Recurse -Severity Error` → zero Error findings (**required when PSScriptAnalyzer is installed**) |
+| Domain B + kit security (primary) | `powershell.exe -NoProfile -File tests\Run-AllGates.ps1` exit 0 |
+| Domain A (PSScriptAnalyzer) | Included optionally in Run-AllGates; or `tests\Run-ScriptAnalyzer.ps1` (exit 0 pass, exit 2 skip if missing, exit 1 fail). Use `-RequireAnalyzer` / `-RequireModule` when CI has the module. |
 | Domain A (Secrets, if inventory enabled) | `gitleaks detect --source .` clean |
 | Docs / contracts | Authority map paths resolve; SECURITY.md matches behavior; no leftover `{{PLACEHOLDERS}}` |
 | Launcher | Double-click `demos\Launch.cmd`; review `demos\Launch.Enterprise.cmd` for enterprise path |

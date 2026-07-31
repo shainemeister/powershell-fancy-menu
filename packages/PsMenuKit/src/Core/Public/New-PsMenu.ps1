@@ -27,7 +27,7 @@ function New-PsMenu {
         [string]$Title,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNull()]
+        [AllowEmptyCollection()]
         [object[]]$Items,
 
         [Parameter(Mandatory = $false)]

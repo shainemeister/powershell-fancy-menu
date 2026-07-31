@@ -36,9 +36,16 @@ Requirements:
 ## Design highlights
 
 - **Zero runtime dependencies** — pure PowerShell + console APIs.
-- **Modular** — import Core only, or add Theme, Nested, Search, MultiSelect, Confirm, Status, Config as they ship.
+- **Modular** — import Core only, or add Theme, Nested, Search, MultiSelect, Confirm, Status, Config.
 - **`.cmd` backbone** — double-click friendly: sets UTF-8, working directory, and invokes `powershell.exe`.
+- **Enterprise-minded** — offline kit, Config as data, dual launchers; see [SECURITY.md](./packages/PsMenuKit/SECURITY.md).
 - **repo-kit governed** — standards under `kit/`; product under `packages/`.
+
+## Verify
+
+```cmd
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
+```
 
 ## Repository layout
 
@@ -53,7 +60,7 @@ CHANGELOG.md          # project history
 
 ## Status
 
-**0.2.1** — Feature modules plus enterprise security baseline (SECURITY.md, Config path controls, ban-list tests, dual launchers). See [CHANGELOG.md](./CHANGELOG.md) and [packages/PsMenuKit/SECURITY.md](./packages/PsMenuKit/SECURITY.md).
+**0.3.0** — Hardened Core (console restore, edge clamps, nest depth) plus `tests/Run-AllGates.ps1` and [tests/MANUAL.md](./tests/MANUAL.md). See [CHANGELOG.md](./CHANGELOG.md) and [SECURITY.md](./packages/PsMenuKit/SECURITY.md).
 
 ## License
 

@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit
 description: Modular pure-PowerShell 5.1 console menu kit (package overview).
-version: "0.2.1"
+version: "0.3.0"
 status: current
 audience:
   - developers
@@ -25,7 +25,7 @@ PsMenuKit is a framework: compose **Core** (always) with optional feature module
 
 | Piece | Role | Status |
 |-------|------|--------|
-| **Core** | Model builders + interactive loop | **0.2.0** |
+| **Core** | Model builders + interactive loop + hardening | **0.3.0** |
 | **Theme** | Named palettes + banners | **0.2.0** |
 | **Status** | Header status line builder | **0.2.0** |
 | **Confirm** | Y/N before destructive actions | **0.2.0** |
@@ -107,6 +107,7 @@ PsMenuKit is designed for **enterprise-compatible** use: current user only, offl
 
 | Version | Notes |
 |---------|--------|
+| 0.3.0 | Console restore, edges, nest depth, Run-AllGates |
 | 0.2.1 | Enterprise security close-out (SECURITY, Config controls) |
 | 0.2.0 | All planned feature modules shipped |
 | 0.1.0 | Initial Core package overview |

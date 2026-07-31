@@ -1,5 +1,5 @@
 @{
-    ModuleVersion     = '0.2.1'
+    ModuleVersion     = '0.3.0'
     GUID              = 'b4d9f2a1-6c7e-4f0b-8d2e-9a1c3e5f7b20'
     Author            = 'powershell-fancy-menu contributors'
     CompanyName       = 'powershell-fancy-menu'
@@ -21,6 +21,7 @@
         'New-PsMenu'
         'New-PsMenuItem'
         'Show-PsMenu'
+        'Get-PsMenuDisplayText'
         'Get-PsMenuTheme'
         'Set-PsMenuTheme'
         'Get-PsMenuThemeName'
@@ -43,7 +44,7 @@
     PrivateData       = @{
         PSData = @{
             Tags         = @('Menu', 'Console', 'Modular', 'Windows', 'PowerShell51')
-            ReleaseNotes = '0.2.1: Enterprise security close-out; Config AllowedRoot; dual launchers.'
+            ReleaseNotes = '0.3.0: Hardening, Run-AllGates, console restore, edge clamps, nest depth.'
         }
     }
 }

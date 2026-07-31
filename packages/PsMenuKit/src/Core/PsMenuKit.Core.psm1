@@ -22,4 +22,5 @@ Export-ModuleMember -Function @(
     'New-PsMenu'
     'New-PsMenuItem'
     'Show-PsMenu'
+    'Get-PsMenuDisplayText'
 )

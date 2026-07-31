@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit CLI / Module Contract
 description: Public surface, parameters, result objects, and host exit-code guidance.
-version: "0.2.1"
+version: "0.3.0"
 status: current
 audience:
   - developers
@@ -22,8 +22,9 @@ Canonical contract for exported PowerShell commands. Co-update this file when pu
 | Function | Module | Purpose |
 |----------|--------|---------|
 | `New-PsMenuItem` | Core | Build one menu item |
-| `New-PsMenu` | Core | Build a menu model |
+| `New-PsMenu` | Core | Build a menu model (empty `Items` allowed) |
 | `Show-PsMenu` | Core | Run interactive loop; return `PsMenuKit.MenuResult` |
+| `Get-PsMenuDisplayText` | Core | Truncate text for safe console width |
 | `Get-PsMenuTheme` / `Set-PsMenuTheme` / `Get-PsMenuThemeName` / `Write-PsMenuBanner` / `Register-PsMenuTheme` | Theme | Palettes and banners |
 | `New-PsMenuStatusLine` | Status | Header status line |
 | `Read-PsMenuConfirm` | Confirm | Y/N prompt (auto-hooked by Core) |
@@ -79,8 +80,14 @@ Runtime: **Windows PowerShell 5.1**. Zero product dependencies.
 | `Theme` | No | object | Overrides menu theme |
 | `StatusLine` | No | string | Optional status under title |
 | `ClearOnExit` | No | bool | Default `$true` |
+| `NestDepth` | No | int | Current nested depth (default 0) |
+| `MaxNestDepth` | No | int | Max submenu depth (default **8**) |
 
 Returns a **MenuResult** (see below). Does not call `exit`; host scripts decide process exit codes.
+
+**Console lifecycle:** saves/restores window title and cursor visibility on exit (best effort). Ctrl+C may prevent restore on some hosts — see SECURITY supported environments.
+
+**Edge behavior:** empty items → `EmptyMenu`; all-disabled → stay until Esc; long labels truncated; nest beyond max stays on parent (no deeper open).
 
 ## Feature module surfaces
 
@@ -110,8 +117,8 @@ Switches: `-IncludeUser`, `-IncludeComputer`, `-IncludeTime`, `-IncludeDate`; pl
 | `ItemId` | string | Selected item id (null if cancelled; comma-joined for multi) |
 | `Label` | string | Selected label(s) |
 | `ActionResult` | object | ActionResult or ActionResult[] for multi |
-| `Reason` | string | `Selected`, `MultiSelected`, `UserQuit`, `EmptyMenu`, … |
-| `Selections` | object[] | Selected item object(s) |
+| `Reason` | string | `Selected`, `MultiSelected`, `UserQuit`, `EmptyMenu`, `NestedDepthExceeded`, … |
+| `Selections` | object[] | Always present (may be empty array) |
 
 ### ActionResult (`PSTypeName = PsMenuKit.ActionResult`)
 
@@ -165,10 +172,19 @@ demos\Launch.Enterprise.cmd
 
 See [SECURITY.md](./SECURITY.md) for IT allowances and trust boundary.
 
+## Verification
+
+```cmd
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
+```
+
+Interactive: [tests/MANUAL.md](../../tests/MANUAL.md)
+
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.3.0 | Nest depth, display text, console restore, edge cases, gates |
 | 0.2.1 | Config security parameters; dual launcher docs |
 | 0.2.0 | Feature modules + Search/MultiSelect keyboard contract |
 | 0.1.0 | Initial Core contract |
