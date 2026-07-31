@@ -1,0 +1,25 @@
+# Starter ignore list for powershell-fancy-menu (repo-kit aligned).
+# Extend for local tooling and conventions.
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Secrets / local env
+.env
+.env.*
+
+# PowerShell
+*.local.ps1
+
+# Formal security + code-validation certificates (regenerable)
+certification/last_certification.json
+certification/last_certification.txt
+certification/logs/
