@@ -4,7 +4,7 @@ function New-PsMenuItem {
         Creates one menu item for PsMenuKit.
     .DESCRIPTION
         Builds a menu item object. Optional properties (Children, ConfirmMessage, etc.)
-        are reserved for feature modules; Core ignores unknown fields.
+        are reserved for feature modules; Core ignores unknown fields when unused.
     .PARAMETER Label
         Display text for the item.
     .PARAMETER Id
@@ -21,6 +21,8 @@ function New-PsMenuItem {
         Optional nested items (used when Nested feature module is loaded).
     .PARAMETER ConfirmMessage
         Optional confirmation prompt text (used when Confirm feature module is loaded).
+    .PARAMETER Selected
+        MultiSelect marker (used when MultiSelect module is loaded).
     .EXAMPLE
         New-PsMenuItem -Label 'Quit' -Action { } -Hotkey 'q'
     #>
@@ -51,7 +53,10 @@ function New-PsMenuItem {
         [object[]]$Children,
 
         [Parameter(Mandatory = $false)]
-        [string]$ConfirmMessage
+        [string]$ConfirmMessage,
+
+        [Parameter(Mandatory = $false)]
+        [bool]$Selected = $false
     )
 
     if ([string]::IsNullOrWhiteSpace($Id)) {
@@ -66,6 +71,7 @@ function New-PsMenuItem {
         Action     = $Action
         Hotkey     = $Hotkey
         Meta       = $Meta
+        Selected   = $Selected
     }
 
     if ($PSBoundParameters.ContainsKey('Children')) {

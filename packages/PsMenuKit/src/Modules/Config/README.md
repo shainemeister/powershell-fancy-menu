@@ -1,5 +1,9 @@
-﻿# PsMenuKit.Config (planned)
+# PsMenuKit.Config
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Load menus from `.psd1` or `.json`. Handlers map names to scriptblocks (no arbitrary code from disk).
 
-Status: **not implemented** in 0.1.0.
+```powershell
+$menu = Import-PsMenuConfig -Path .\menu.psd1 -HandlerMap @{
+    Deploy = { .\Deploy.ps1 }
+}
+```

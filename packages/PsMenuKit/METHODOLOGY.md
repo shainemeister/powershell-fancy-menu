@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit Methodology
 description: Composition model, extension rules, and pure-PS 5.1 design constraints.
-version: "0.1.0"
+version: "0.2.0"
 status: current
 audience:
   - developers
@@ -74,20 +74,21 @@ Launch.cmd → powershell.exe → consumer script
 - Input via `[Console]::ReadKey($true)` with RawUI fallback.
 - Manifests declare `PowerShellVersion = '5.1'`.
 
-## Planned feature modules
+## Feature modules (0.2.0)
 
-| Module | Adds |
-|--------|------|
-| Theme | Named palettes, banners, box styles |
-| Nested | Submenus, breadcrumb, Esc = back |
-| Search | Incremental filter |
-| MultiSelect | Space toggle, batch activate |
-| Confirm | Y/N before destructive actions |
-| Status | Dynamic header/footer |
-| Config | Load menus from `.psd1` / JSON |
+| Module | Adds | Core hook |
+|--------|------|-----------|
+| Theme | Named palettes, banners | `Get-PsMenuTheme` via `Resolve-PsMenuTheme` |
+| Nested | Submenus, breadcrumb | `Show-PsMenuNested` on `Children` |
+| Search | Incremental filter | `Select-PsMenuItem` when imported |
+| MultiSelect | Space toggle, batch activate | `Menu.MultiSelect` + `Set-PsMenuItemSelection` |
+| Confirm | Y/N before destructive actions | `Read-PsMenuConfirm` on `ConfirmMessage` |
+| Status | Dynamic header line | Consumer passes `-StatusLine` |
+| Config | Load menus from `.psd1` / JSON | Builds Core models + HandlerMap |
 
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.2.0 | Feature modules implemented and documented |
 | 0.1.0 | Initial composition methodology |

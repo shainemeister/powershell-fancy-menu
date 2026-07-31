@@ -1,21 +1,63 @@
 @{
-    # Sample menu data for the future Config module.
-    # Core 0.1.0 does not load this automatically; Demo.ps1 builds menus in code.
-    Title    = 'Sample Config Menu'
-    Subtitle = 'Loaded from .psd1 when Config ships'
-    Items    = @(
+    Title       = 'PsMenuKit Demo'
+    Subtitle    = 'Pure PowerShell 5.1 · modular features · type to filter'
+    Theme       = 'Dark'
+    MultiSelect = $false
+    Items       = @(
         @{
-            Id     = 'hello'
-            Label  = 'Say hello'
-            Hotkey = 'h'
-            # Action handlers are registered by the host (not embedded arbitrary code from untrusted files)
+            Id      = 'hello'
+            Label   = 'Say hello'
+            Hotkey  = 'h'
             Handler = 'Hello'
         }
         @{
-            Id      = 'quit'
-            Label   = 'Quit'
-            Hotkey  = 'q'
-            Handler = 'Quit'
+            Id      = 'time'
+            Label   = 'Show local time'
+            Hotkey  = 't'
+            Handler = 'Time'
+        }
+        @{
+            Id      = 'version'
+            Label   = 'Show PowerShell version'
+            Hotkey  = 'v'
+            Handler = 'Version'
+        }
+        @{
+            Id     = 'tools'
+            Label  = 'Tools submenu'
+            Hotkey = 'o'
+            Children = @(
+                @{
+                    Id      = 'nested-a'
+                    Label   = 'Nested action A'
+                    Hotkey  = 'a'
+                    Handler = 'NestedA'
+                }
+                @{
+                    Id      = 'nested-b'
+                    Label   = 'Nested action B'
+                    Hotkey  = 'b'
+                    Handler = 'NestedB'
+                }
+            )
+        }
+        @{
+            Id             = 'wipe'
+            Label          = 'Simulate wipe (needs confirm)'
+            Hotkey         = 'w'
+            Handler        = 'Wipe'
+            ConfirmMessage = 'Really run simulated wipe? This is a demo only.'
+        }
+        @{
+            Id      = 'about'
+            Label   = 'About this kit'
+            Hotkey  = 'a'
+            Handler = 'About'
+        }
+        @{
+            Id      = 'disabled'
+            Label   = 'Coming soon (disabled)'
+            Enabled = $false
         }
     )
 }

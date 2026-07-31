@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit
 description: Modular pure-PowerShell 5.1 console menu kit (package overview).
-version: "0.1.0"
+version: "0.2.0"
 status: current
 audience:
   - developers
@@ -21,12 +21,18 @@ Modular, **dependency-free** interactive console menus for **Windows PowerShell 
 
 ## Summary
 
-PsMenuKit is a framework: compose **Core** (always) with optional feature modules as they ship. No Gallery modules, no NuGet packages, no external binaries at runtime.
+PsMenuKit is a framework: compose **Core** (always) with optional feature modules. No Gallery modules, no NuGet packages, no external binaries at runtime.
 
 | Piece | Role | Status |
 |-------|------|--------|
-| **Core** | Model builders + interactive loop | **0.1.0** |
-| Theme / Nested / Search / MultiSelect / Confirm / Status / Config | Opt-in capabilities | Planned |
+| **Core** | Model builders + interactive loop | **0.2.0** |
+| **Theme** | Named palettes + banners | **0.2.0** |
+| **Status** | Header status line builder | **0.2.0** |
+| **Confirm** | Y/N before destructive actions | **0.2.0** |
+| **Nested** | Submenus + breadcrumbs | **0.2.0** |
+| **Search** | Type-to-filter | **0.2.0** |
+| **MultiSelect** | Space-toggle multi selection | **0.2.0** |
+| **Config** | Load `.psd1` / `.json` menus | **0.2.0** |
 
 ## Contents
 
@@ -44,32 +50,37 @@ PsMenuKit is a framework: compose **Core** (always) with optional feature module
 
 ## Install / import
 
-No install. From a consumer script:
+No install. Selective (recommended for small apps):
 
 ```powershell
-$core = Join-Path $PSScriptRoot '..\packages\PsMenuKit\src\Core\PsMenuKit.Core.psd1'
-Import-Module $core -Force
+Import-Module .\packages\PsMenuKit\src\Core\PsMenuKit.Core.psd1 -Force
+Import-Module .\packages\PsMenuKit\src\Modules\Theme\PsMenuKit.Theme.psd1 -Force
+# add only the feature modules you need
 ```
 
-Or import the package root (nested Core):
+Or import everything via package root:
 
 ```powershell
-Import-Module (Join-Path $PSScriptRoot '..\packages\PsMenuKit\PsMenuKit.psd1') -Force
+Import-Module .\packages\PsMenuKit\PsMenuKit.psd1 -Force
 ```
 
 ## Minimal example
 
 ```powershell
 Import-Module .\packages\PsMenuKit\src\Core\PsMenuKit.Core.psd1 -Force
+Import-Module .\packages\PsMenuKit\src\Modules\Theme\PsMenuKit.Theme.psd1 -Force
+Import-Module .\packages\PsMenuKit\src\Modules\Search\PsMenuKit.Search.psd1 -Force
 
-$menu = New-PsMenu -Title 'Demo' -Subtitle 'Arrow keys + Enter' -Items @(
+Set-PsMenuTheme -Name Dark | Out-Null
+
+$menu = New-PsMenu -Title 'Demo' -Subtitle 'type to filter' -Theme Dark -Items @(
     New-PsMenuItem -Id 'hello' -Label 'Say hello' -Hotkey 'h' -Action {
-        Write-Host 'Hello from PsMenuKit.'
+        'Hello from PsMenuKit.'
     }
     New-PsMenuItem -Id 'disabled' -Label 'Not available' -Enabled $false
 )
 
-$result = Show-PsMenu -Menu $menu
+$result = Show-PsMenu -Menu $menu -Theme Dark
 if ($result.Cancelled) {
     Write-Host 'Cancelled.'
 }
@@ -91,4 +102,5 @@ else {
 
 | Version | Notes |
 |---------|--------|
+| 0.2.0 | All planned feature modules shipped |
 | 0.1.0 | Initial Core package overview |

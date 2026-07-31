@@ -1,5 +1,7 @@
-﻿# PsMenuKit.MultiSelect (planned)
+# PsMenuKit.MultiSelect
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Space toggles `[x]` markers when `New-PsMenu -MultiSelect $true` (uses `Set-PsMenuItemSelection -Toggle`). Enter runs all selected actions (or focused item if none marked).
 
-Status: **not implemented** in 0.1.0.
+```powershell
+$menu = New-PsMenu -Title 'Pick' -MultiSelect $true -Items @(...)
+```

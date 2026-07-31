@@ -8,6 +8,27 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.2.0] - 2026-07-30
+
+#### Added
+
+- Feature modules (composable, zero deps):
+  - **Theme** — Default/Dark/Light/HighContrast palettes, banners, `Register-PsMenuTheme`
+  - **Status** — `New-PsMenuStatusLine` (user/time/last-result)
+  - **Confirm** — `Read-PsMenuConfirm` for item `ConfirmMessage`
+  - **Nested** — `Show-PsMenuNested` for item `Children` + breadcrumb titles
+  - **Search** — `Filter-PsMenuItems`; Core type-to-filter when module loaded
+  - **MultiSelect** — Space toggle; `New-PsMenu -MultiSelect`; batch activate
+  - **Config** — `Import-PsMenuConfig` for `.psd1` / `.json` + HandlerMap
+- Demo loads `demos/menus/sample.menu.psd1` with nested tools and confirm item.
+- `tests/Feature.Modules.Tests.ps1` non-interactive smoke coverage.
+
+#### Changed
+
+- Core loop: search filter, multi-select, refined hotkey/Q/Esc behavior.
+- Root `PsMenuKit.psd1` nests all feature modules (optional selective import still supported).
+- Package contracts and module README stubs updated for 0.2.0.
+
 ### [0.1.0] - 2026-07-30
 
 #### Added

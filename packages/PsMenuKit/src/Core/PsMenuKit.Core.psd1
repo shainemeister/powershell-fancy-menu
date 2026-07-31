@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PsMenuKit.Core.psm1'
-    ModuleVersion     = '0.1.0'
+    ModuleVersion     = '0.2.0'
     GUID              = 'a3c8e1f2-5b6d-4e9a-9c1d-7f2e8b4a0d15'
     Author            = 'powershell-fancy-menu contributors'
     CompanyName       = 'powershell-fancy-menu'
@@ -20,7 +20,7 @@
             Tags         = @('Menu', 'Console', 'TUI', 'Windows', 'PowerShell51')
             LicenseUri   = ''
             ProjectUri   = ''
-            ReleaseNotes = 'Initial Core engine: model builders and interactive loop.'
+            ReleaseNotes = '0.2.0: Search/MultiSelect hooks, MultiSelect menu flag, result Selections.'
         }
     }
 }

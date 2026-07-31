@@ -1,5 +1,8 @@
-﻿# PsMenuKit.Search (planned)
+# PsMenuKit.Search
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Incremental label filter via `Select-PsMenuItem`. When imported, Core shows a filter line; typing filters, Backspace deletes, Esc clears filter then quits.
 
-Status: **not implemented** in 0.1.0.
+```powershell
+Import-Module .\PsMenuKit.Search.psd1
+# type while menu is open to filter labels
+```

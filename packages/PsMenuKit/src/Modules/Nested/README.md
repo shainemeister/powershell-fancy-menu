@@ -1,5 +1,9 @@
-﻿# PsMenuKit.Nested (planned)
+# PsMenuKit.Nested
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Submenus via item `Children`. Core calls `Show-PsMenuNested` on activate. Esc returns to parent.
 
-Status: **not implemented** in 0.1.0.
+```powershell
+New-PsMenuItem -Label 'Tools' -Children @(
+    New-PsMenuItem -Label 'A' -Action { 'a' }
+)
+```

@@ -1,23 +1,37 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    PsMenuKit interactive demo (Windows PowerShell 5.1).
+    PsMenuKit interactive demo (Windows PowerShell 5.1) — Core + all feature modules.
 .DESCRIPTION
-    Imports Core, builds a sample menu, and loops until the user quits.
-    Launched by Launch.cmd for double-click use.
+    Launched by Launch.cmd. Demonstrates Theme, Status, Confirm, Nested, Search,
+    MultiSelect, and Config composition.
 #>
 $ErrorActionPreference = 'Stop'
 
 $demoRoot = $PSScriptRoot
 $repoRoot = Split-Path -Parent $demoRoot
-$coreManifest = Join-Path -Path $repoRoot -ChildPath 'packages\PsMenuKit\src\Core\PsMenuKit.Core.psd1'
+$pkgRoot = Join-Path -Path $repoRoot -ChildPath 'packages\PsMenuKit'
 
-if (-not (Test-Path -LiteralPath $coreManifest)) {
-    Write-Error "Core module not found: $coreManifest"
-    exit 1
+function Import-PsMenuKitModule {
+    param([string]$RelativePath)
+    $path = Join-Path -Path $pkgRoot -ChildPath $RelativePath
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw "Module not found: $path"
+    }
+    Import-Module -Name $path -Force
 }
 
-Import-Module -Name $coreManifest -Force
+# Core first, then features (order matches capability dependencies)
+Import-PsMenuKitModule 'src\Core\PsMenuKit.Core.psd1'
+Import-PsMenuKitModule 'src\Modules\Theme\PsMenuKit.Theme.psd1'
+Import-PsMenuKitModule 'src\Modules\Status\PsMenuKit.Status.psd1'
+Import-PsMenuKitModule 'src\Modules\Confirm\PsMenuKit.Confirm.psd1'
+Import-PsMenuKitModule 'src\Modules\Nested\PsMenuKit.Nested.psd1'
+Import-PsMenuKitModule 'src\Modules\Search\PsMenuKit.Search.psd1'
+Import-PsMenuKitModule 'src\Modules\MultiSelect\PsMenuKit.MultiSelect.psd1'
+Import-PsMenuKitModule 'src\Modules\Config\PsMenuKit.Config.psd1'
+
+Set-PsMenuTheme -Name 'Dark' | Out-Null
 
 function Show-DemoResult {
     param(
@@ -27,22 +41,33 @@ function Show-DemoResult {
 
     Write-Host ''
     if ($Result.Cancelled) {
-        Write-Host 'Menu closed.' -ForegroundColor DarkGray
+        Write-Host 'Returned / cancelled.' -ForegroundColor DarkGray
         return
     }
 
-    Write-Host ("Selected : {0} (Id={1})" -f $Result.Label, $Result.ItemId) -ForegroundColor Cyan
+    Write-Host ("Selected : {0}" -f $Result.Label) -ForegroundColor Cyan
+    Write-Host ("Id       : {0}" -f $Result.ItemId) -ForegroundColor DarkCyan
+    Write-Host ("Reason   : {0}" -f $Result.Reason) -ForegroundColor DarkGray
+
+    if ($null -ne $Result.PSObject.Properties['Selections'] -and @($Result.Selections).Count -gt 1) {
+        Write-Host ('Count    : {0}' -f @($Result.Selections).Count)
+    }
+
     if ($null -ne $Result.ActionResult) {
-        if ($Result.ActionResult.Success) {
-            Write-Host 'Action   : success' -ForegroundColor Green
-            if ($null -ne $Result.ActionResult.Output) {
-                Write-Host ("Output   : {0}" -f $Result.ActionResult.Output)
+        $actions = @($Result.ActionResult)
+        foreach ($ar in $actions) {
+            if ($null -eq $ar) { continue }
+            if ($ar.Success) {
+                Write-Host ('Action   : success — {0}' -f $ar.Label) -ForegroundColor Green
+                if ($null -ne $ar.Output) {
+                    Write-Host ("Output   : {0}" -f $ar.Output)
+                }
             }
-        }
-        else {
-            Write-Host 'Action   : failed' -ForegroundColor Red
-            if ($null -ne $Result.ActionResult.Error) {
-                Write-Host ("Error    : {0}" -f $Result.ActionResult.Error.Exception.Message) -ForegroundColor Red
+            else {
+                Write-Host ('Action   : failed — {0}' -f $ar.Label) -ForegroundColor Red
+                if ($null -ne $ar.Error) {
+                    Write-Host ("Error    : {0}" -f $ar.Error.Exception.Message) -ForegroundColor Red
+                }
             }
         }
     }
@@ -57,25 +82,37 @@ function Show-DemoResult {
     }
 }
 
-$menu = New-PsMenu -Title 'PsMenuKit Demo' -Subtitle 'Pure PowerShell 5.1 · zero dependencies' -Items @(
-    New-PsMenuItem -Id 'hello' -Label 'Say hello' -Hotkey 'h' -Action {
-        return 'Hello from PsMenuKit Core.'
-    }
-    New-PsMenuItem -Id 'time' -Label 'Show local time' -Hotkey 't' -Action {
-        return (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
-    }
-    New-PsMenuItem -Id 'env' -Label 'Show PowerShell version' -Hotkey 'v' -Action {
-        return $PSVersionTable.PSVersion.ToString()
-    }
-    New-PsMenuItem -Id 'disabled' -Label 'Coming soon (disabled)' -Enabled $false
-    New-PsMenuItem -Id 'about' -Label 'About this kit' -Hotkey 'a' -Action {
-        return 'PsMenuKit: modular pure-PS menu framework (Core 0.1.0). Feature modules planned.'
-    }
-)
+# Handler map for Config-loaded sample menu
+$handlerMap = @{
+    Hello   = { return 'Hello from config-driven HandlerMap.' }
+    Time    = { return (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') }
+    Version = { return $PSVersionTable.PSVersion.ToString() }
+    About   = { return 'PsMenuKit 0.2.0 — modular pure-PS menu framework.' }
+    NestedA = { return 'Nested action A' }
+    NestedB = { return 'Nested action B' }
+    Wipe    = { return 'Simulated wipe complete (demo).' }
+}
+
+$configPath = Join-Path -Path $demoRoot -ChildPath 'menus\sample.menu.psd1'
+$menu = Import-PsMenuConfig -Path $configPath -HandlerMap $handlerMap
+
+Write-PsMenuBanner -Lines @(
+    'PsMenuKit Demo'
+    'Core + Theme Status Confirm Nested'
+    'Search MultiSelect Config'
+) -ThemeName 'Dark'
+
+Write-Host ''
+Write-Host 'Starting menu in 1s...' -ForegroundColor DarkGray
+Start-Sleep -Seconds 1
+
+$lastResult = $null
 
 try {
     while ($true) {
-        $result = Show-PsMenu -Menu $menu -StatusLine ("User: {0} · {1}" -f $env:USERNAME, (Get-Date).ToString('HH:mm:ss'))
+        $status = New-PsMenuStatusLine -IncludeUser -IncludeTime -LastResult $lastResult -Text 'type to filter'
+        $result = Show-PsMenu -Menu $menu -Theme 'Dark' -StatusLine $status
+        $lastResult = $result
         if ($result.Cancelled) {
             break
         }

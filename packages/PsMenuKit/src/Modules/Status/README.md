@@ -1,5 +1,14 @@
-﻿# PsMenuKit.Status (planned)
+# PsMenuKit.Status
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Header status line builder.
 
-Status: **not implemented** in 0.1.0.
+## Exports
+
+| Function | Purpose |
+|----------|---------|
+| `New-PsMenuStatusLine` | Compose user/time/custom/last-result segments |
+
+```powershell
+$status = New-PsMenuStatusLine -IncludeUser -IncludeTime -LastResult $last
+Show-PsMenu -Menu $menu -StatusLine $status
+```

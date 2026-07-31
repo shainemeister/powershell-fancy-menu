@@ -52,7 +52,7 @@ CHANGELOG.md          # project history
 
 ## Status
 
-**0.1.0** — Core engine + demo launcher. Feature modules are planned (see [PLAN.md](./PLAN.md) and [CHANGELOG.md](./CHANGELOG.md)).
+**0.2.0** — Core + Theme, Status, Confirm, Nested, Search, MultiSelect, Config. See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

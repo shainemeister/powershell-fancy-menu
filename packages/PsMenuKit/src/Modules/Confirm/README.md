@@ -1,5 +1,7 @@
-﻿# PsMenuKit.Confirm (planned)
+# PsMenuKit.Confirm
 
-Feature module placeholder. See [METHODOLOGY.md](../../../METHODOLOGY.md) and root [PLAN.md](../../../../../PLAN.md).
+Y/N confirmation prompts. Core calls `Read-PsMenuConfirm` when an item has `ConfirmMessage`.
 
-Status: **not implemented** in 0.1.0.
+```powershell
+New-PsMenuItem -Label 'Delete' -ConfirmMessage 'Are you sure?' -Action { ... }
+```

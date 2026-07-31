@@ -9,6 +9,7 @@ function Show-PsMenuFrame {
         [pscustomobject]$Menu,
 
         [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
         [object[]]$VisibleItems,
 
         [Parameter(Mandatory = $true)]
@@ -21,7 +22,13 @@ function Show-PsMenuFrame {
         [string]$StatusLine,
 
         [Parameter(Mandatory = $false)]
-        [string]$FilterText
+        [string]$FilterText,
+
+        [Parameter(Mandatory = $false)]
+        [bool]$MultiSelectMode = $false,
+
+        [Parameter(Mandatory = $false)]
+        [bool]$SearchEnabled = $false
     )
 
     Clear-Host
@@ -38,8 +45,10 @@ function Show-PsMenuFrame {
         Write-PsMenuLine -Text ('| {0}' -f $StatusLine) -ForegroundColor $Theme.Hint
     }
 
-    if (-not [string]::IsNullOrWhiteSpace($FilterText)) {
-        Write-PsMenuLine -Text ('| Filter: {0}' -f $FilterText) -ForegroundColor $Theme.Hint
+    if ($SearchEnabled) {
+        $filterDisplay = $FilterText
+        if ($null -eq $filterDisplay) { $filterDisplay = '' }
+        Write-PsMenuLine -Text ('| Filter: {0}_' -f $filterDisplay) -ForegroundColor $Theme.Hint
     }
 
     Write-PsMenuLine -Text $border -ForegroundColor $Theme.Border
@@ -57,14 +66,33 @@ function Show-PsMenuFrame {
                 $enabled = [bool]$item.Enabled
             }
 
+            $check = ''
+            if ($MultiSelectMode) {
+                $isSel = $false
+                if ($null -ne $item.PSObject.Properties['Selected']) {
+                    $isSel = [bool]$item.Selected
+                }
+                if ($isSel) {
+                    $check = '[x] '
+                }
+                else {
+                    $check = '[ ] '
+                }
+            }
+
             $hotkeyPart = ''
             if ($null -ne $item.PSObject.Properties['Hotkey'] -and -not [string]::IsNullOrWhiteSpace([string]$item.Hotkey)) {
                 $hotkeyPart = ' [{0}]' -f ([string]$item.Hotkey).ToUpperInvariant()
             }
 
-            $label = ' {0} {1}{2}' -f $marker, $item.Label, $hotkeyPart
+            $childHint = ''
+            if ($null -ne $item.PSObject.Properties['Children'] -and $null -ne $item.Children -and @($item.Children).Count -gt 0) {
+                $childHint = ' >'
+            }
+
+            $label = ' {0} {1}{2}{3}{4}' -f $marker, $check, $item.Label, $hotkeyPart, $childHint
             if (-not $enabled) {
-                $label = '   {0}{1} (disabled)' -f $item.Label, $hotkeyPart
+                $label = '   {0}{1}{2} (disabled)' -f $check, $item.Label, $hotkeyPart
                 Write-PsMenuLine -Text $label -ForegroundColor $Theme.Disabled
             }
             elseif ($i -eq $SelectedIndex) {
@@ -78,6 +106,20 @@ function Show-PsMenuFrame {
 
     Write-PsMenuLine -Text ''
     Write-PsMenuLine -Text $border -ForegroundColor $Theme.Border
-    Write-PsMenuLine -Text '  Up/Down  Enter=select  Esc/Q=quit  1-9=jump  hotkeys' -ForegroundColor $Theme.Hint
+
+    $hints = New-Object System.Collections.Generic.List[string]
+    $hints.Add('Up/Down')
+    $hints.Add('Enter=select')
+    if ($MultiSelectMode) {
+        $hints.Add('Space=toggle')
+    }
+    if ($SearchEnabled) {
+        $hints.Add('type=filter')
+        $hints.Add('Bksp=clear char')
+    }
+    $hints.Add('Esc/Q=quit')
+    $hints.Add('1-9=jump')
+
+    Write-PsMenuLine -Text ('  {0}' -f ($hints -join '  ')) -ForegroundColor $Theme.Hint
     Write-PsMenuLine -Text $border -ForegroundColor $Theme.Border
 }
