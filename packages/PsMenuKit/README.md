@@ -35,7 +35,7 @@ PsMenuKit is a framework: compose **Core** (always) with optional feature module
 | **Search** | Type-to-filter | **0.2.0** |
 | **MultiSelect** | Space-toggle multi selection | **0.2.0** |
 
-Root landing with AI paste prompts and copy-paste adoption: [repository README](../../README.md) · [How to use (quick path)](../../README.md#how-to-use-quick-path) · [Add to your repo](../../README.md#add-to-your-repo).
+Root landing with AI paste prompts and copy-paste adoption: [repository README](../../README.md) / [How to use (quick path)](../../README.md#how-to-use-quick-path) / [Add to your repo](../../README.md#add-to-your-repo).
 
 ## Contents
 
