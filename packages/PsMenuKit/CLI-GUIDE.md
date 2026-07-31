@@ -10,6 +10,7 @@ related:
   - ./README.md
   - ./METHODOLOGY.md
   - ./SECURITY.md
+  - ../../README.md
 last_updated: "2026-07-30"
 ---
 

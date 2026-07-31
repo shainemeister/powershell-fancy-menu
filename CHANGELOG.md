@@ -25,11 +25,15 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 - `tests/Security.Action.Tests.ps1` (action type, display, limits, junction when available)
 - Wired into `Run-AllGates.ps1` and certification Domain A checks
+- Root README **Add to your repo**: vendor copy, code-first menu, config + HandlerMap + `Launch.cmd` examples
+- Package README vendored import paths and config-driven example; module version table aligned to **0.5.0**
 
 #### Changed
 
 - Package / Core / Config module versions **0.5.0**
 - CLI-GUIDE Import-PsMenuConfig parameters for limits and security behavior
+- `templates/consumer-launch/App.ps1` kit path resolution: `PSMENUKIT_HOME`, `vendor\`, monorepo `packages\` fallbacks
+- `templates/consumer-launch/README.md` copy-into-another-repo steps
 
 ### [0.4.0] - 2026-07-30
 
