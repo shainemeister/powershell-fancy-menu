@@ -8,6 +8,15 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [Unreleased]
+
+#### Documentation
+
+- Root README end-user landing rewrite: Summary, **How to use (quick path)** AI paste prompts with canonical GitHub URL (try, code-first adopt, enterprise/config adopt, local clone, upgrade vendored kit)
+- Improved adoption blocks: path decision tree, clone/sparse/xcopy vendor options, same-folder import variant, selective import moved to Advanced
+- Use cases focused on integrators; maintainers (gates, cert, PLAN, kit) moved last; **Where to go next** table
+- Cross-links from package README and consumer-launch template to quick-path anchors
+
 ### [0.5.1] - 2026-07-30
 
 #### Security

@@ -35,7 +35,7 @@ PsMenuKit is a framework: compose **Core** (always) with optional feature module
 | **Search** | Type-to-filter | **0.2.0** |
 | **MultiSelect** | Space-toggle multi selection | **0.2.0** |
 
-Root landing with copy-paste adoption: [repository README - Add to your repo](../../README.md#add-to-your-repo).
+Root landing with AI paste prompts and copy-paste adoption: [repository README](../../README.md) · [How to use (quick path)](../../README.md#how-to-use-quick-path) · [Add to your repo](../../README.md#add-to-your-repo).
 
 ## Contents
 
@@ -136,7 +136,7 @@ PsMenuKit is designed for **enterprise-compatible** use: current user only, offl
 
 | Doc | Purpose |
 |-----|---------|
-| [Root README - Add to your repo](../../README.md#add-to-your-repo) | Copy-paste vendor + host examples |
+| [Root README - How to use / Add to your repo](../../README.md#how-to-use-quick-path) | AI paste prompts, vendor steps, host examples |
 | [CLI-GUIDE.md](./CLI-GUIDE.md) | Public function contract, results, exit codes |
 | [METHODOLOGY.md](./METHODOLOGY.md) | Composition model and extension rules |
 | [SECURITY.md](./SECURITY.md) | Trust boundary, ban list, IT allowances |
