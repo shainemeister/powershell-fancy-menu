@@ -83,5 +83,7 @@ Launch.cmd
 ## Security
 
 - Config is data only; HandlerMap is trusted host code.
+- Always pass `Import-PsMenuConfig -AllowedRoot` (template does this).
+- **`PSMENUKIT_HOME` is a trust boundary:** it can redirect `Import-Module` to any path. Prefer vendored `vendor\PsMenuKit` under an approved directory; only set the env var to IT-approved locations. Prefer Authenticode-signed modules where policy requires it.
 - See [packages/PsMenuKit/SECURITY.md](../../packages/PsMenuKit/SECURITY.md).
 - Root adoption examples: [README - Add to your repo](../../README.md#add-to-your-repo).

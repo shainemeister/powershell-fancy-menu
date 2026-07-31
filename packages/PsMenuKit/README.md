@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit
 description: Modular pure-PowerShell 5.1 console menu kit (package overview).
-version: "0.5.0"
+version: "0.5.1"
 status: current
 audience:
   - developers
@@ -25,9 +25,9 @@ PsMenuKit is a framework: compose **Core** (always) with optional feature module
 
 | Piece | Role | Module version |
 |-------|------|----------------|
-| **Package root** | NestedModules load Core + all features | **0.5.0** |
-| **Core** | Model builders + interactive loop + hardening | **0.5.0** |
-| **Config** | Load `.psd1` / `.json` menus | **0.5.0** |
+| **Package root** | NestedModules load Core + all features | **0.5.1** |
+| **Core** | Model builders + interactive loop + hardening | **0.5.1** |
+| **Config** | Load `.psd1` / `.json` menus | **0.5.1** |
 | **Nested** | Submenus + breadcrumbs | **0.3.0** |
 | **Theme** | Named palettes + banners | **0.2.0** |
 | **Status** | Header status line builder | **0.2.0** |
@@ -148,6 +148,7 @@ PsMenuKit is designed for **enterprise-compatible** use: current user only, offl
 
 | Version | Notes |
 |---------|--------|
+| 0.5.1 | Confirm/title sanitization; MaxFileBytes; schema allowlist; AllowedRoot warn; cert 1.1 |
 | 0.5.0 | Action fail-closed; graph limits; reparse reject; display sanitization; CI; version table sync; vendored import examples |
 | 0.4.0 | Enterprise Launch only; cert + consumer template pointers |
 | 0.3.0 | Console restore, edges, nest depth, Run-AllGates |

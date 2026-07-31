@@ -88,7 +88,9 @@ function Show-PsMenu {
         $consoleState = Save-PsMenuConsoleState
         try {
             if ($consoleState['CapturedTitle']) {
-                $Host.UI.RawUI.WindowTitle = [string]$Menu.Title
+                # Sanitize title: menu Title may come from semi-trusted config data
+                $safeTitle = Get-PsMenuDisplayText -Text ([string]$Menu.Title) -MaxWidth 200
+                $Host.UI.RawUI.WindowTitle = $safeTitle
             }
         }
         catch { }

@@ -52,6 +52,7 @@ $gates = @(
     @{ Name = 'Security.BanList'; Path = (Join-Path $testsRoot 'Security.BanList.Tests.ps1') }
     @{ Name = 'Security.Config'; Path = (Join-Path $testsRoot 'Security.Config.Tests.ps1') }
     @{ Name = 'Security.Action'; Path = (Join-Path $testsRoot 'Security.Action.Tests.ps1') }
+    @{ Name = 'Security.Launcher'; Path = (Join-Path $testsRoot 'Security.Launcher.Tests.ps1') }
 )
 
 foreach ($g in $gates) {

@@ -23,8 +23,21 @@ function Read-PsMenuConfirm {
         [switch]$DefaultYes
     )
 
+    # Sanitize before write so untrusted ConfirmMessage cannot inject controls/ANSI
+    $safeMessage = $Message
+    $sanitizeCmd = Get-Command -Name 'Get-PsMenuDisplayText' -ErrorAction SilentlyContinue
+    if ($null -ne $sanitizeCmd) {
+        $safeMessage = & $sanitizeCmd -Text $Message -MaxWidth 4000
+    }
+    else {
+        $safeMessage = [regex]::Replace([string]$Message, '\x1B\[[0-9;?]*[ -/]*[@-~]', '')
+        $safeMessage = [regex]::Replace($safeMessage, '\x1B\][^\x07\x1B]*(?:\x07|\x1B\\)?', '')
+        $safeMessage = [regex]::Replace($safeMessage, '[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '')
+        $safeMessage = $safeMessage -replace "[\r\n\t]+", ' '
+    }
+
     Write-Host ''
-    Write-Host $Message -ForegroundColor Yellow
+    Write-Host $safeMessage -ForegroundColor Yellow
     if ($DefaultYes) {
         Write-Host '  [Y]es (default)  /  [N]o  /  Esc=cancel' -ForegroundColor DarkGray
     }

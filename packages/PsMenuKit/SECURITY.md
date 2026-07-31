@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit Security
 description: Trust boundary, unacceptable patterns, IT allowances, and validation for the pure-PowerShell menu kit.
-version: "0.5.0"
+version: "0.5.1"
 status: current
 audience:
   - security
@@ -24,7 +24,7 @@ last_updated: "2026-07-30"
 
 Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free interactive console menu framework for **Windows PowerShell 5.1**.
 
-**Package version:** 0.5.0  
+**Package version:** 0.5.1  
 **Package folder:** `packages/PsMenuKit/`  
 **Runtime:** Windows PowerShell 5.1 (`powershell.exe`) - zero product runtime dependencies
 
@@ -76,7 +76,7 @@ Aligned with repo-kit security baseline: privilege, network, secrets, dependenci
 | **Privilege** | Current user only. Kit modules do not elevate (no UAC / `RunAs`). |
 | **Network** | **None.** Kit does not download modules, menus, telemetry, or package indexes. |
 | **Identity** | Runs as the interactive (or scheduled) user identity of the host process. |
-| **Scope of files** | Local filesystem for config (`.psd1` / `.json`). Optional `-AllowedRoot` restricts config paths; reparse points (junctions/symlinks) under the root are rejected. UNC rejected by default. |
+| **Scope of files** | Local filesystem for config (`.psd1` / `.json`). Optional `-AllowedRoot` restricts config paths (warning if omitted); reparse points (junctions/symlinks) under the root are rejected. **Hardlinks are not reparse points** (residual risk - restrict write ACLs on menus dirs). UNC rejected by default. Pre-parse `MaxFileBytes` (default 2 MiB). |
 | **Dependencies** | **Zero** product runtime dependencies. SAST tools (PSScriptAnalyzer, optional Gitleaks) are **developer tooling only**. |
 | **Actions** | Host-defined **scriptblocks** only. Non-scriptblock Actions (e.g. mutated string command names) are rejected at invoke time. Kit does not invent remote or file-embedded code execution. |
 
@@ -97,7 +97,7 @@ Current user session -> host script (trusted HandlerMap)
 | `Invoke-WebRequest` / `WebClient` / `DownloadString` in kit modules | Remote load | **Banned** |
 | Kit-initiated elevation (`RunAs`, permanent admin) | Privilege escalation | **Banned** |
 | Base64 / encoded payload -> execute | Obfuscated malware pattern | **Banned** |
-| Config fields executed as code (`ActionScript`, `Command`, `ScriptBlock` strings from file) | Config-as-RCE | **Banned** (schema reject) |
+| Config fields executed as code (`Action`, `ActionScript`, `Command`, `ScriptBlock`, etc. from file) | Config-as-RCE | **Banned** (schema reject + item key allowlist) |
 | Permanent `Set-ExecutionPolicy Unrestricted` (or similar) in product | Weakens host | **Banned** |
 | Hard-coded credentials / tokens | Secret exposure | **Banned** |
 | Telemetry / phone-home | Network + privacy | **Banned** |
@@ -148,11 +148,13 @@ Current user session -> host script (trusted HandlerMap)
 |---------|--------|
 | Config extensions | `.psd1`, `.json` only |
 | Config location | Local path; URI schemes rejected; UNC default-deny |
-| Config allowlist | `-AllowedRoot` recommended for enterprise hosts; junctions/symlinks under root rejected |
+| Config allowlist | `-AllowedRoot` recommended for enterprise hosts (warning if omitted); junctions/symlinks under root rejected |
+| Config size | Default **MaxFileBytes=2097152** (2 MiB) before parse (fail closed; overridable) |
 | Config graph limits | Default **MaxItems=500**, **MaxDepth=16**, **MaxLabelLength=500** (fail closed; overridable) |
+| Config schema | Banned execution-adjacent keys; root/item key allowlists (Meta values free-form except banned keys) |
 | Handler binding | Name -> host HandlerMap only; map values must be scriptblocks; missing handler => no action unless host sets DefaultAction |
 | Action invoke | Fail-closed: only `[scriptblock]` is invoked (blocks string/command-name abuse) |
-| Display integrity | Control characters and ANSI/OSC sequences stripped before console write (best effort) |
+| Display integrity | Control characters and ANSI/OSC sequences stripped for labels, status, **ConfirmMessage**, and **WindowTitle** (best effort) |
 | Secrets | Do not place secrets in menu labels, config, Meta, or status lines |
 | Nested UI depth | Default max **8** (fail soft / stay on parent) |
 | Console restore | Title + cursor restored on normal exit (best effort on Ctrl+C) |
@@ -168,7 +170,7 @@ Current user session -> host script (trusted HandlerMap)
 | Windows Terminal hosting 5.1 | **Supported** | **Supported** | Preferred UX |
 | Constrained Language Mode | **Unsupported** for full Action dispatch | **Partial** (data parse may work) | Scriptblock Actions / host maps typically cannot run under CLM. **Do not** disable CLM as an install step. |
 | Non-interactive / no RawUI console | **Unsupported** | Config-only hosts OK | `Show-PsMenu` needs keyboard input |
-| PowerShell 7+ | Best effort | Best effort | Not first-class in 0.5.0 |
+| PowerShell 7+ | Best effort | Best effort | Not first-class in 0.5.1 |
 | Remote PSSession without interactive console | **Unsupported** | N/A | |
 
 **Honesty rules:** never document permanent ExecutionPolicy Unrestricted, CLM disable, or AV/AMSI disable as product requirements.
@@ -265,14 +267,16 @@ gitleaks detect --source .
 |------|----------|
 | 1. Approved path | Place kit + host scripts under AppLocker / WDAC allowlisted directories |
 | 2. NoProfile launch | Use `powershell.exe -NoProfile -File host.ps1` (see demos/templates) |
-| 3. AllowedRoot | Always pass `Import-PsMenuConfig -AllowedRoot <approved\menus>` |
-| 4. HandlerMap change control | Treat host scriptblocks as application code (review / PR) |
-| 5. Prefer explicit handlers | Avoid broad `DefaultAction` unless catch-all is intentional |
-| 6. Signing (if policy requires) | Authenticode-sign host + modules; do not set Unrestricted |
-| 7. Release integrity | Prefer release checksums or signed packages; treat dropped files under `src/` as supply-chain risk |
-| 8. No secrets in menus | Labels, Meta, ConfirmMessage, and status free-text are display surfaces |
-| 9. Screen share | Status lines may show username/host/last labels - disable sensitive slots when recording |
-| 10. Run gates | `tests\Run-AllGates.ps1` (CI with `-RequireAnalyzer` on merge) |
+| 3. AllowedRoot | Always pass `Import-PsMenuConfig -AllowedRoot <approved\menus>` (kit warns if omitted) |
+| 4. Menus write ACL | Restrict who can write under AllowedRoot (mitigates hardlink / drop-file social engineering) |
+| 5. HandlerMap change control | Treat host scriptblocks as application code (review / PR) |
+| 6. Prefer explicit handlers | Avoid broad `DefaultAction` unless catch-all is intentional |
+| 7. Signing (if policy requires) | Authenticode-sign host + modules; do not set Unrestricted |
+| 8. Release integrity | Prefer release checksums or signed packages; treat dropped files under `src/` as supply-chain risk; compare cert Integrity hashes |
+| 9. No secrets in menus | Labels, Meta, ConfirmMessage, and status free-text are display surfaces |
+| 10. Screen share | Status lines may show host/last labels - avoid `-IncludeUser` when recording |
+| 11. Run gates | `tests\Run-AllGates.ps1` (CI with `-RequireAnalyzer` on merge); formal cert schema 1.1 |
+| 12. Module path trust | Consumer `PSMENUKIT_HOME` can redirect Import-Module - use approved paths only |
 
 ---
 
@@ -285,12 +289,16 @@ gitleaks detect --source .
 | HandlerMap = host trust | Explicit code ownership for IT review |
 | Action type fail-closed | Block mutated string command invocation |
 | AllowedRoot + reparse reject | Prefix check alone is insufficient against junctions |
+| AllowedRoot warn if omitted | Compat-preserving nudge toward enterprise default |
+| MaxFileBytes | Reduce pre-parse memory/DoS risk |
+| Schema allowlist | Fail closed on unknown/execution-adjacent config keys |
+| Hardlink residual (document) | Hardlinks are not reparse points; IT write ACL is the control |
 | Graph limits | Reduce config-driven DoS / hang risk |
-| Display sanitization | Best-effort terminal control-sequence integrity |
+| Display sanitization | Best-effort terminal control-sequence integrity (labels, confirm, title) |
 | No network in kit | Clear offline boundary |
-| Single enterprise Launch.cmd | No Bypass on product demo path |
-| Ban-list + CI | Regression guard; analyzer required in CI |
-| Certification folder | Self-attestation for IT packets; not a product gate |
+| Single enterprise Launch.cmd | No Bypass on product demo path; launcher policy gate |
+| Ban-list + CI | Regression guard; analyzer required in CI (pinned version) |
+| Certification 1.1 | Self-attestation with integrity hashes + multi-surface checks; not a product gate |
 
 ---
 
@@ -315,6 +323,7 @@ gitleaks detect --source .
 | `tests/Security.BanList.Tests.ps1` | Banned API scan |
 | `tests/Security.Config.Tests.ps1` | Config path / schema negatives |
 | `tests/Security.Action.Tests.ps1` | Action type, display sanitization, limits, reparse |
+| `tests/Security.Launcher.Tests.ps1` | Product `.cmd` enterprise policy |
 | `.github/workflows/ci.yml` | Windows CI with required analyzer |
 | `kit/RULES.md` | Inventory + verification table |
 | `kit/rules/security.md` | repo-kit security policy |
@@ -325,6 +334,7 @@ gitleaks detect --source .
 
 | Version | Notes |
 |---------|--------|
+| 0.5.1 | Confirm/title sanitization; MaxFileBytes; schema allowlist; AllowedRoot warn; hardlink residual docs; cert schema 1.1; launcher policy gate |
 | 0.5.0 | Action type fail-closed; HandlerMap validation; reparse reject; graph limits; display sanitization; CI; IT checklist; honest CLM |
 | 0.4.0 | Single enterprise Launch.cmd; certification pointer; Bypass only for dev gates |
 | 0.3.0 | Supported environments matrix; Run-AllGates validation; console restore notes |

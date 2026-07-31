@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit CLI / Module Contract
 description: Public surface, parameters, result objects, and host exit-code guidance.
-version: "0.5.0"
+version: "0.5.1"
 status: current
 audience:
   - developers
@@ -99,7 +99,8 @@ Returns a **MenuResult** (see below). Does not call `exit`; host scripts decide 
 | `Path` | Yes | Local `.psd1` or `.json` only (URI schemes rejected) |
 | `HandlerMap` | No | `hashtable` of handler name -> scriptblock (**host-trusted code**; non-scriptblock rejected) |
 | `DefaultAction` | No | Fallback scriptblock when Handler missing (intentional catch-all only) |
-| `AllowedRoot` | No | Resolved path must stay under this directory; reparse points rejected (enterprise recommended) |
+| `AllowedRoot` | No | Resolved path must stay under this directory; reparse points rejected; warning if omitted (enterprise: always set) |
+| `MaxFileBytes` | No | Max config file size before parse (default **2097152** / 2 MiB) |
 | `AllowUnc` | No | Switch; UNC paths rejected by default |
 | `MaxItems` | No | Max total items including nested (default **500**) |
 | `MaxDepth` | No | Max Children nesting depth in config (default **16**) |
@@ -190,6 +191,7 @@ Interactive: [tests/MANUAL.md](../../tests/MANUAL.md)
 
 | Version | Notes |
 |---------|--------|
+| 0.5.1 | MaxFileBytes; schema allowlist; AllowedRoot warn; Confirm/title sanitization |
 | 0.5.0 | Action fail-closed; HandlerMap type check; graph limits; display sanitization; reparse reject |
 | 0.4.0 | Single enterprise Launch.cmd; certification pointer; MultiSelect demo |
 | 0.3.0 | Nest depth, display text, console restore, edge cases, gates |

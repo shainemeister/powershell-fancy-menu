@@ -34,6 +34,7 @@ $paths = @(
     (Join-Path $repoRoot 'demos')
     (Join-Path $repoRoot 'tests')
     (Join-Path $repoRoot 'templates')
+    (Join-Path $repoRoot 'certification')
 )
 
 $results = New-Object System.Collections.Generic.List[object]

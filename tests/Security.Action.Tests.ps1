@@ -76,6 +76,19 @@ $cleanOsc = Get-PsMenuDisplayText -Text $withOsc -MaxWidth 80
 if ($cleanOsc.Contains([string]$esc)) { throw 'OSC escape must be stripped' }
 if ($cleanOsc.Contains([string]$bell)) { throw 'BEL control must be stripped' }
 
+# ConfirmMessage path uses sanitizer (Read-PsMenuConfirm when Confirm module loaded)
+Import-Module (Join-Path $pkg 'src\Modules\Confirm\PsMenuKit.Confirm.psd1') -Force
+$confirmEvil = "Really?${esc}[31mRED${esc}[0m"
+# Unit-test sanitizer parity used by Confirm: message must clean via Get-PsMenuDisplayText
+$confirmClean = Get-PsMenuDisplayText -Text $confirmEvil -MaxWidth 4000
+if ($confirmClean.Contains([string]$esc)) { throw 'ConfirmMessage sanitization must strip ESC' }
+
+# WindowTitle path: sanitized title must not retain ESC
+$titleEvil = "Menu${esc}]0;Owned${bell}"
+$titleClean = Get-PsMenuDisplayText -Text $titleEvil -MaxWidth 200
+if ($titleClean.Contains([string]$esc)) { throw 'WindowTitle sanitization must strip ESC' }
+if ($titleClean.Contains([string]$bell)) { throw 'WindowTitle sanitization must strip BEL' }
+
 # --- A2: HandlerMap non-scriptblock rejected ---
 if (-not (Test-Path -LiteralPath $fixtures)) {
     New-Item -ItemType Directory -Path $fixtures -Force | Out-Null

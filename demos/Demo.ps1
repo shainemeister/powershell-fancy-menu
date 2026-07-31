@@ -82,7 +82,7 @@ $handlerMap = @{
     Hello   = { return 'Hello from config-driven HandlerMap.' }
     Time    = { return (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') }
     Version = { return $PSVersionTable.PSVersion.ToString() }
-    About   = { return 'PsMenuKit 0.5.0 - modular pure-PS menu framework.' }
+    About   = { return 'PsMenuKit 0.5.1 - modular pure-PS menu framework.' }
     NestedA = { return 'Nested action A' }
     NestedB = { return 'Nested action B' }
     Wipe    = { return 'Simulated wipe complete (demo).' }
@@ -121,7 +121,8 @@ $lastResult = $null
 
 try {
     while ($true) {
-        $status = New-PsMenuStatusLine -IncludeUser -IncludeTime -LastResult $lastResult -Text $hint
+        # Avoid -IncludeUser by default (PII on shared screens / recordings)
+        $status = New-PsMenuStatusLine -IncludeTime -LastResult $lastResult -Text $hint
         $result = Show-PsMenu -Menu $menu -Theme 'Dark' -StatusLine $status
         $lastResult = $result
         if ($result.Cancelled) {

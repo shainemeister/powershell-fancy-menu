@@ -130,5 +130,71 @@ if ($jsonMenu.Title -ne 'JSON Sample Menu') { throw 'JSON config title mismatch'
 if ($jsonMenu.Items.Count -lt 2) { throw 'JSON config items missing' }
 if ($null -eq $jsonMenu.Items[0].Action) { throw 'JSON HandlerMap action not bound' }
 
+# MaxFileBytes: reject oversize before parse
+$oversizePath = Join-Path $fixtures 'oversize.menu.psd1'
+$pad = 'X' * 2048
+@"
+@{
+    Title = 'Oversize'
+    Items = @(
+        @{ Label = 'L'; Handler = 'Hello' }
+    )
+    # pad: $pad
+}
+"@ | Set-Content -LiteralPath $oversizePath -Encoding UTF8
+# Ensure file is larger than a tiny MaxFileBytes budget
+Assert-Throws -Like '*MaxFileBytes*' -Script {
+    Import-PsMenuConfig -Path $oversizePath -HandlerMap $handlers -AllowedRoot $fixtures -MaxFileBytes 1024
+}
+
+# Banned Action key (code-from-file)
+$actionKeyFile = Join-Path $fixtures 'banned-action.menu.psd1'
+@'
+@{
+    Title = 'BadAction'
+    Items = @(
+        @{
+            Label  = 'X'
+            Action = 'Get-Date'
+        }
+    )
+}
+'@ | Set-Content -LiteralPath $actionKeyFile -Encoding UTF8
+Assert-Throws -Like '*banned key*' -Script {
+    Import-PsMenuConfig -Path $actionKeyFile -HandlerMap $handlers -AllowedRoot $fixtures
+}
+
+# Unknown item key rejected (allowlist)
+$unknownKeyFile = Join-Path $fixtures 'unknown-item-key.menu.psd1'
+@'
+@{
+    Title = 'UnknownKey'
+    Items = @(
+        @{
+            Label = 'X'
+            FooBar = 'nope'
+        }
+    )
+}
+'@ | Set-Content -LiteralPath $unknownKeyFile -Encoding UTF8
+Assert-Throws -Like '*unknown key*' -Script {
+    Import-PsMenuConfig -Path $unknownKeyFile -HandlerMap $handlers -AllowedRoot $fixtures
+}
+
+# Missing AllowedRoot emits warning (compat) but still loads when path is valid
+$warnMessages = @()
+$prevWarn = $WarningPreference
+$WarningPreference = 'Continue'
+try {
+    $null = Import-PsMenuConfig -Path $sample -HandlerMap $handlers -WarningVariable warnMessages -WarningAction SilentlyContinue
+}
+finally {
+    $WarningPreference = $prevWarn
+}
+$warnText = ($warnMessages | ForEach-Object { [string]$_ }) -join ' '
+if ($warnText -notlike '*AllowedRoot*') {
+    throw 'Expected Write-Warning about missing AllowedRoot when parameter omitted'
+}
+
 Write-Host 'Security.Config.Tests OK' -ForegroundColor Green
 exit 0

@@ -209,7 +209,7 @@ CHANGELOG.md          # project history
 
 ## Status
 
-**0.5.0** - Security hardening (action type fail-closed, HandlerMap validation, AllowedRoot reparse reject, config limits, display sanitization), expanded gates, Windows CI. See [CHANGELOG.md](./CHANGELOG.md).
+**0.5.1** - Defense-in-depth (Confirm/title sanitization, MaxFileBytes, schema allowlist, AllowedRoot warn), launcher policy gate, certification schema 1.1. See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

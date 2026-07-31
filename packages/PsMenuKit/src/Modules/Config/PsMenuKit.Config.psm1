@@ -5,6 +5,7 @@
 $script:PsMenuConfigDefaultMaxItems = 500
 $script:PsMenuConfigDefaultMaxDepth = 16
 $script:PsMenuConfigDefaultMaxLabelLength = 500
+$script:PsMenuConfigDefaultMaxFileBytes = 2097152  # 2 MiB
 
 function Import-PsMenuConfig {
     <#
@@ -20,11 +21,14 @@ function Import-PsMenuConfig {
 
         Security controls:
         - Local filesystem paths only (rejects http/https/ftp and URL-like paths)
-        - Optional -AllowedRoot: resolved path must stay under that directory
+        - Optional -AllowedRoot: resolved path must stay under that directory (enterprise: always set; warn if omitted)
         - Reparse points (junctions/symlinks) under AllowedRoot are rejected
+        - Hardlinks are NOT reparse points: residual risk if writers can create hardlinks under AllowedRoot (IT should restrict write ACLs)
         - Extensions .psd1 and .json only
         - HandlerMap values must be scriptblocks
+        - Pre-parse MaxFileBytes limit (fail closed)
         - Graph limits: MaxItems, MaxDepth, MaxLabelLength (fail closed)
+        - Schema bans execution-adjacent keys; item keys allowlisted
         - Fail closed on missing/invalid files
     .PARAMETER Path
         Path to local .psd1 or .json menu file.
@@ -35,7 +39,7 @@ function Import-PsMenuConfig {
         Prefer explicit HandlerMap keys; use DefaultAction only as intentional catch-all.
     .PARAMETER AllowedRoot
         Optional directory; config path must resolve under this root.
-        Enterprise hosts should always set this.
+        Enterprise hosts should always set this. A warning is emitted when omitted.
     .PARAMETER AllowUnc
         When set, UNC paths are allowed (still must pass AllowedRoot if set).
         Default is to reject UNC for enterprise-safe defaults.
@@ -45,6 +49,8 @@ function Import-PsMenuConfig {
         Maximum Children nesting depth in the config graph (default 16).
     .PARAMETER MaxLabelLength
         Maximum Label character length (default 500).
+    .PARAMETER MaxFileBytes
+        Maximum config file size in bytes before parse (default 2097152 / 2 MiB).
     #>
     [CmdletBinding()]
     [OutputType([pscustomobject])]
@@ -75,7 +81,11 @@ function Import-PsMenuConfig {
 
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 10000)]
-        [int]$MaxLabelLength = 500
+        [int]$MaxLabelLength = 500,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1024, 104857600)]
+        [int]$MaxFileBytes = 2097152
     )
 
     $newMenuCmd = Get-Command -Name 'New-PsMenu' -ErrorAction SilentlyContinue
@@ -88,7 +98,16 @@ function Import-PsMenuConfig {
         Assert-PsMenuHandlerMap -HandlerMap $HandlerMap
     }
 
+    if ([string]::IsNullOrWhiteSpace($AllowedRoot)) {
+        Write-Warning 'Import-PsMenuConfig: -AllowedRoot was not set. Enterprise hosts should always pass -AllowedRoot so config paths cannot escape an approved menus directory.'
+    }
+
     $fullPath = Resolve-PsMenuConfigPath -Path $Path -AllowedRoot $AllowedRoot -AllowUnc:$AllowUnc
+
+    $fileInfo = Get-Item -LiteralPath $fullPath -ErrorAction Stop
+    if ($fileInfo.Length -gt $MaxFileBytes) {
+        throw ("Menu config exceeds MaxFileBytes ({0}). Path={1} Size={2}" -f $MaxFileBytes, $fullPath, $fileInfo.Length)
+    }
 
     $ext = [System.IO.Path]::GetExtension($fullPath).ToLowerInvariant()
     $data = $null
@@ -110,6 +129,7 @@ function Import-PsMenuConfig {
 
     # Reject known dangerous keys that would imply code-from-file (fail closed)
     Assert-PsMenuConfigSchema -Data $data
+    Assert-PsMenuConfigRootKeys -Data $data
 
     $title = Get-PsMenuConfigValue -Data $data -Name 'Title'
     if ([string]::IsNullOrWhiteSpace([string]$title)) {
@@ -328,6 +348,7 @@ function Assert-PsMenuConfigSchema {
         [object]$Data
     )
 
+    # Execution-adjacent / code-from-file keys (recursive, including Meta)
     $bannedKeys = @(
         'ActionScript'
         'ScriptBlock'
@@ -338,6 +359,17 @@ function Assert-PsMenuConfigSchema {
         'Code'
         'PowerShell'
         'PSCode'
+        'Action'
+        'OnSelect'
+        'OnClick'
+        'Run'
+        'Execute'
+        'Cmdlet'
+        'Module'
+        'Function'
+        'Method'
+        'FilePath'
+        'ScriptPath'
     )
 
     $queue = New-Object System.Collections.Generic.Queue[object]
@@ -377,6 +409,97 @@ function Assert-PsMenuConfigSchema {
     }
 }
 
+function Assert-PsMenuConfigRootKeys {
+    <#
+    .SYNOPSIS
+        Allowlists top-level menu config keys (defense in depth).
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Data
+    )
+
+    $allowed = @(
+        'Title'
+        'Subtitle'
+        'Theme'
+        'MultiSelect'
+        'Items'
+    )
+
+    $keys = @()
+    if ($Data -is [hashtable] -or $Data -is [System.Collections.IDictionary]) {
+        $keys = @($Data.Keys | ForEach-Object { [string]$_ })
+    }
+    elseif ($Data -is [pscustomobject]) {
+        $keys = @($Data.PSObject.Properties | ForEach-Object { [string]$_.Name })
+    }
+    else {
+        return
+    }
+
+    foreach ($keyStr in $keys) {
+        $ok = $false
+        foreach ($a in $allowed) {
+            if ($keyStr.Equals($a, [System.StringComparison]::OrdinalIgnoreCase)) {
+                $ok = $true
+                break
+            }
+        }
+        if (-not $ok) {
+            throw "Menu config contains unknown root key '$keyStr'. Allowed: $($allowed -join ', ')."
+        }
+    }
+}
+
+function Assert-PsMenuConfigItemKeys {
+    <#
+    .SYNOPSIS
+        Allowlists keys on a single menu item node (Meta values are free-form; Meta key itself is allowed).
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Data
+    )
+
+    $allowed = @(
+        'Id'
+        'Label'
+        'Hotkey'
+        'Enabled'
+        'ConfirmMessage'
+        'Handler'
+        'Children'
+        'Meta'
+    )
+
+    $keys = @()
+    if ($Data -is [hashtable] -or $Data -is [System.Collections.IDictionary]) {
+        $keys = @($Data.Keys | ForEach-Object { [string]$_ })
+    }
+    elseif ($Data -is [pscustomobject]) {
+        $keys = @($Data.PSObject.Properties | ForEach-Object { [string]$_.Name })
+    }
+    else {
+        return
+    }
+
+    foreach ($keyStr in $keys) {
+        $ok = $false
+        foreach ($a in $allowed) {
+            if ($keyStr.Equals($a, [System.StringComparison]::OrdinalIgnoreCase)) {
+                $ok = $true
+                break
+            }
+        }
+        if (-not $ok) {
+            throw "Menu item contains unknown key '$keyStr'. Allowed: $($allowed -join ', '). Use Handler + host HandlerMap for behavior."
+        }
+    }
+}
+
 function ConvertTo-PsMenuItemModels {
     [CmdletBinding()]
     param(
@@ -406,8 +529,9 @@ function ConvertTo-PsMenuItemModels {
             }
         }
 
-        # Per-item ban check for nested structures
+        # Per-item ban check + allowlist for nested structures
         Assert-PsMenuConfigSchema -Data $raw
+        Assert-PsMenuConfigItemKeys -Data $raw
 
         $label = Get-PsMenuConfigValue -Data $raw -Name 'Label'
         if ([string]::IsNullOrWhiteSpace([string]$label)) {

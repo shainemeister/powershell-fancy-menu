@@ -8,6 +8,26 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.5.1] - 2026-07-30
+
+#### Security
+
+- **ConfirmMessage + WindowTitle sanitization:** control/ANSI stripping on confirm prompts and console title (same helper as labels)
+- **MaxFileBytes:** default 2 MiB pre-parse size cap on menu configs (fail closed)
+- **Schema hardening:** expanded banned keys (`Action`, `OnSelect`, `Run`, ...); root and item key allowlists
+- **AllowedRoot warning:** `Write-Warning` when `-AllowedRoot` is omitted (compat-preserving; enterprise should always set it)
+- **Hardlink residual risk documented:** hardlinks are not reparse points; IT write ACL guidance in SECURITY.md
+- **Launcher policy gate:** `tests/Security.Launcher.Tests.ps1` enforces enterprise `.cmd` pattern on demos + templates
+- **CI:** PSScriptAnalyzer pinned to **1.23.0**; analyzer also scans `certification/`
+- **Certification schema 1.1:** integrity hashes, tool versions, multi-surface inventory (PowerShell/Shell/Secrets), optional Gitleaks, version consistency check
+
+#### Changed
+
+- Package / Core / Config module versions **0.5.1**
+- Demo status line no longer includes username by default (PII on shared screens)
+- Consumer template README: `PSMENUKIT_HOME` trust boundary notes
+- `certification/README.md` expanded operator guide
+
 ### [0.5.0] - 2026-07-30
 
 #### Security
