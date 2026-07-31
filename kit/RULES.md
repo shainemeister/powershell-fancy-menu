@@ -99,7 +99,7 @@ Replace paths below with your project’s real files. Rows that do not apply may
 | Language surface inventory | [Language surface inventory](#language-surface-inventory) (this file) |
 | Default sample menu config | [demos/menus/sample.menu.psd1](../demos/menus/sample.menu.psd1) |
 | Golden tests / fixtures | [tests/](../tests/) · [tests/fixtures/](../tests/fixtures/) |
-| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) · [demos/Demo.ps1](../demos/Demo.ps1) |
+| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) · [demos/Launch.Enterprise.cmd](../demos/Launch.Enterprise.cmd) · [demos/Demo.ps1](../demos/Demo.ps1) |
 
 **Rule:** Adding, removing, or renaming intentional source files should update the inventory (catalog or equivalent) in the same change set when the project maintains one.
 
@@ -107,8 +107,9 @@ Replace paths below with your project’s real files. Rows that do not apply may
 
 | Surface | Domain B (validation) | Domain A (security) | Notes |
 |---------|----------------------|---------------------|--------|
-| **PowerShell** product code | Parse all product `*.ps1` / `*.psm1` with zero errors ([tests/Parse-Gate.ps1](../tests/Parse-Gate.ps1)); PS 5.1 syntax only | **PSScriptAnalyzer** `-Severity Error` when the tool is installed (developer tooling) | Runtime: Windows PowerShell 5.1 only; zero product deps |
-| **Shell** product (`.cmd` launchers) | Documented launcher checklist in package SECURITY / CLI-GUIDE | Manual review; no download-and-run | Windows primary |
+| **PowerShell** product code | `tests/Parse-Gate.ps1` exit 0; `tests/Core.Model.Tests.ps1`; `tests/Feature.Modules.Tests.ps1`; PS 5.1 only | **PSScriptAnalyzer** `-Severity Error` (developer tooling; required when installed — missing tool fails ship of security-sensitive change sets); kit ban-list `tests/Security.BanList.Tests.ps1`; Config path tests `tests/Security.Config.Tests.ps1` | Runtime: Windows PowerShell 5.1; **zero** product deps; no network/elevation in kit |
+| **Shell** product (`.cmd` launchers) | Documented launcher checklist in [SECURITY.md](../packages/PsMenuKit/SECURITY.md) | Manual review; no download-and-run; dual launchers (demo Bypass vs enterprise) | Windows primary |
+| **Secrets** (optional enterprise) | — | **Gitleaks** `gitleaks detect` when team enables secrets scanning | Prefer enable for enterprise releases |
 
 ### Verification before ship
 
@@ -116,10 +117,12 @@ Replace paths below with your project’s real files. Rows that do not apply may
 |-------------|----------------------|
 | Core / module behavior | `demos\Launch.cmd` — navigate, select, quit on Windows PowerShell 5.1 |
 | Public API | Contract in CLI-GUIDE matches exports; smoke import in demo |
-| Domain B (PowerShell) | `powershell.exe -NoProfile -File tests\Parse-Gate.ps1` exit 0 |
-| Domain A (PowerShell) | `Invoke-ScriptAnalyzer -Path packages,demos,tests -Recurse -Severity Error` exit 0 when tool present |
-| Docs / contracts | Authority map paths resolve; no leftover `{{PLACEHOLDERS}}` in finished product docs |
-| Launcher | Double-click `demos\Launch.cmd` without prior `cd` |
+| Domain B (PowerShell) | `powershell.exe -NoProfile -File tests\Parse-Gate.ps1` exit 0; model + feature tests exit 0 |
+| Domain A (PowerShell) | `tests\Security.BanList.Tests.ps1` exit 0; `tests\Security.Config.Tests.ps1` exit 0; `Invoke-ScriptAnalyzer -Path packages,demos,tests -Recurse -Severity Error` → zero Error findings (**required when PSScriptAnalyzer is installed**) |
+| Domain A (Secrets, if inventory enabled) | `gitleaks detect --source .` clean |
+| Docs / contracts | Authority map paths resolve; SECURITY.md matches behavior; no leftover `{{PLACEHOLDERS}}` |
+| Launcher | Double-click `demos\Launch.cmd`; review `demos\Launch.Enterprise.cmd` for enterprise path |
+| Security / trust | [packages/PsMenuKit/SECURITY.md](../packages/PsMenuKit/SECURITY.md) co-updated with execution/launcher/config changes |
 
 ---
 

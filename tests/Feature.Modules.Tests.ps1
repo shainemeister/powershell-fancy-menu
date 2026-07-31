@@ -58,7 +58,7 @@ $handlers = @{
     NestedB = { 'nb' }
     Wipe    = { 'w' }
 }
-$menu = Import-PsMenuConfig -Path $cfg -HandlerMap $handlers
+$menu = Import-PsMenuConfig -Path $cfg -HandlerMap $handlers -AllowedRoot (Split-Path -Parent $cfg)
 if ($menu.Title -ne 'PsMenuKit Demo') { throw 'Config title mismatch' }
 if ($menu.Items.Count -lt 5) { throw 'Config items missing' }
 $tools = $menu.Items | Where-Object { $_.Id -eq 'tools' }

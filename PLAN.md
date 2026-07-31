@@ -44,8 +44,8 @@ See repository tree: `kit/` (standards), `packages/PsMenuKit/` (product), `demos
 |-------|--------|--------|
 | 0 | Kit adopt + root docs | **Done** (0.1.0) |
 | 1 | Core engine + Launch.cmd demo | **Done** (0.1.0) |
-| 2 | Feature modules (Theme → Config) | **Done** (0.2.0) |
-| 3 | Hardening + verification | Partial (parse + model + feature tests) |
+| 2 | Feature modules + enterprise security | **Done** (0.2.0 features; 0.2.1 security close-out) |
+| 3 | Hardening + verification | Partial (parse + model + feature + security tests) |
 | 4 | Polish (themes, consumer templates) | Optional |
 
 ## Success criteria

@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit Methodology
 description: Composition model, extension rules, and pure-PS 5.1 design constraints.
-version: "0.2.0"
+version: "0.2.1"
 status: current
 audience:
   - developers
@@ -65,7 +65,8 @@ Launch.cmd → powershell.exe → consumer script
 | Optional item properties | `Children`, `ConfirmMessage` |
 | Optional commands | `Read-PsMenuConfirm`, `Get-PsMenuTheme` |
 | Theme hashtables | ConsoleColor palettes |
-| Config → model | Future Config module loads `.psd1` into `New-PsMenu` graphs |
+| Config → model | `Import-PsMenuConfig` loads local `.psd1`/JSON into `New-PsMenu` graphs via HandlerMap |
+| Security composition | Config is data only; HandlerMap is host-trusted code; prefer `-AllowedRoot` |
 
 ## PS 5.1 constraints
 
@@ -84,11 +85,20 @@ Launch.cmd → powershell.exe → consumer script
 | MultiSelect | Space toggle, batch activate | `Menu.MultiSelect` + `Set-PsMenuItemSelection` |
 | Confirm | Y/N before destructive actions | `Read-PsMenuConfirm` on `ConfirmMessage` |
 | Status | Dynamic header line | Consumer passes `-StatusLine` |
-| Config | Load menus from `.psd1` / JSON | Builds Core models + HandlerMap |
+| Config | Load menus from `.psd1` / JSON | Builds Core models + HandlerMap; path allowlist |
+
+## Security composition (enterprise)
+
+1. Never load menu config from remote URLs.  
+2. Prefer `Import-PsMenuConfig -AllowedRoot <approved\menus>`.  
+3. Treat HandlerMap as application code under change control.  
+4. Use Confirm for destructive labels; do not put secrets in config.  
+5. See [SECURITY.md](./SECURITY.md) for ban list and IT allowances.
 
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.2.1 | Security composition notes |
 | 0.2.0 | Feature modules implemented and documented |
 | 0.1.0 | Initial composition methodology |

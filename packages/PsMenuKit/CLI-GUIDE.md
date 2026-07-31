@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit CLI / Module Contract
 description: Public surface, parameters, result objects, and host exit-code guidance.
-version: "0.2.0"
+version: "0.2.1"
 status: current
 audience:
   - developers
@@ -88,11 +88,13 @@ Returns a **MenuResult** (see below). Does not call `exit`; host scripts decide 
 
 | Parameter | Required | Notes |
 |-----------|----------|-------|
-| `Path` | Yes | `.psd1` or `.json` |
-| `HandlerMap` | No | `hashtable` of handler name → scriptblock |
-| `DefaultAction` | No | Fallback scriptblock |
+| `Path` | Yes | Local `.psd1` or `.json` only (URI schemes rejected) |
+| `HandlerMap` | No | `hashtable` of handler name → scriptblock (**host-trusted code**) |
+| `DefaultAction` | No | Fallback scriptblock when Handler missing |
+| `AllowedRoot` | No | Resolved path must stay under this directory (enterprise recommended) |
+| `AllowUnc` | No | Switch; UNC paths rejected by default |
 
-Config never executes arbitrary code from the file. Only `Handler` names bound via `HandlerMap` become actions.
+Config never executes arbitrary code from the file. Only `Handler` names bound via `HandlerMap` become actions. Banned keys (e.g. `ActionScript`, `Command`) cause fail-closed errors. See [SECURITY.md](./SECURITY.md).
 
 ### New-PsMenuStatusLine (Status)
 
@@ -147,15 +149,26 @@ Suggested mapping for launcher scripts (not enforced by Core):
 
 ## Launcher demo
 
+**Lab / developer** (local Bypass — not a permanent host policy change):
+
 ```cmd
 demos\Launch.cmd
 ```
 
 Invokes `powershell.exe -NoProfile -ExecutionPolicy Bypass -File demos\Demo.ps1`.
 
+**Enterprise pattern** (no Bypass; relies on existing policy / signing):
+
+```cmd
+demos\Launch.Enterprise.cmd
+```
+
+See [SECURITY.md](./SECURITY.md) for IT allowances and trust boundary.
+
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.2.1 | Config security parameters; dual launcher docs |
 | 0.2.0 | Feature modules + Search/MultiSelect keyboard contract |
 | 0.1.0 | Initial Core contract |

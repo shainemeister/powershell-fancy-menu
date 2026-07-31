@@ -1,5 +1,5 @@
 @{
-    ModuleVersion     = '0.2.0'
+    ModuleVersion     = '0.2.1'
     GUID              = 'b4d9f2a1-6c7e-4f0b-8d2e-9a1c3e5f7b20'
     Author            = 'powershell-fancy-menu contributors'
     CompanyName       = 'powershell-fancy-menu'
@@ -43,7 +43,7 @@
     PrivateData       = @{
         PSData = @{
             Tags         = @('Menu', 'Console', 'Modular', 'Windows', 'PowerShell51')
-            ReleaseNotes = '0.2.0: Feature modules Theme, Status, Confirm, Nested, Search, MultiSelect, Config.'
+            ReleaseNotes = '0.2.1: Enterprise security close-out; Config AllowedRoot; dual launchers.'
         }
     }
 }

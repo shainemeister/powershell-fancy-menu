@@ -1,0 +1,32 @@
+@echo off
+setlocal
+title PsMenuKit Demo (Enterprise)
+cd /d "%~dp0"
+
+REM UTF-8 code page for broader glyph support (font-dependent)
+chcp 65001 >nul
+
+REM ============================================================================
+REM Enterprise-oriented launcher pattern
+REM ----------------------------------------------------------------------------
+REM - Uses -NoProfile (avoid profile-injected code)
+REM - Does NOT permanently change machine ExecutionPolicy
+REM - Relies on existing host policy (e.g. RemoteSigned / AllSigned)
+REM - For unsigned lab use only, prefer demos\Launch.cmd (Bypass) under IT approval
+REM - Place this package under an IT-approved path (AppLocker/WDAC as applicable)
+REM - See packages\PsMenuKit\SECURITY.md
+REM ============================================================================
+
+powershell.exe -NoProfile -File "%~dp0Demo.ps1" %*
+set "ERR=%ERRORLEVEL%"
+
+if not "%ERR%"=="0" (
+  echo.
+  echo Demo exited with code %ERR%.
+  echo If scripts are blocked by ExecutionPolicy, use signed scripts or an IT-approved process.
+  echo Do not permanently set ExecutionPolicy Unrestricted on enterprise hosts.
+  echo See packages\PsMenuKit\SECURITY.md
+  pause
+)
+
+endlocal & exit /b %ERR%

@@ -8,6 +8,29 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.2.1] - 2026-07-30
+
+#### Added
+
+- Enterprise security close-out aligned with repo-kit security baseline:
+  - Full [packages/PsMenuKit/SECURITY.md](./packages/PsMenuKit/SECURITY.md) (trust boundary, ban list, IT allowances, validation, reviewer statement)
+  - `Import-PsMenuConfig -AllowedRoot` and default UNC deny; URI/remote path rejection; banned config keys (e.g. `ActionScript`)
+  - `demos/Launch.Enterprise.cmd` (no permanent policy change; no Bypass)
+  - `tests/Security.BanList.Tests.ps1` and `tests/Security.Config.Tests.ps1`
+- Optional Secrets inventory guidance (Gitleaks) in kit verification table
+
+#### Changed
+
+- Demo uses `-AllowedRoot` for sample menu loads
+- CLI-GUIDE / package README document dual launchers and Config security parameters
+- kit/RULES.md Domain A/B verification rows tightened for PowerShell SAST and security tests
+- CHANGELOG Search naming corrected to `Select-PsMenuItem` (was Filter-PsMenuItems in 0.2.0 notes)
+
+#### Security
+
+- Kit product tree scanned for banned patterns (IEX, web download, RunAs, Set-ExecutionPolicy, Install-Module, etc.)
+- Config fail-closed outside allowlisted roots and for code-from-file keys
+
 ### [0.2.0] - 2026-07-30
 
 #### Added
@@ -17,7 +40,7 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
   - **Status** — `New-PsMenuStatusLine` (user/time/last-result)
   - **Confirm** — `Read-PsMenuConfirm` for item `ConfirmMessage`
   - **Nested** — `Show-PsMenuNested` for item `Children` + breadcrumb titles
-  - **Search** — `Filter-PsMenuItems`; Core type-to-filter when module loaded
+  - **Search** — `Select-PsMenuItem`; Core type-to-filter when module loaded
   - **MultiSelect** — Space toggle; `New-PsMenu -MultiSelect`; batch activate
   - **Config** — `Import-PsMenuConfig` for `.psd1` / `.json` + HandlerMap
 - Demo loads `demos/menus/sample.menu.psd1` with nested tools and confirm item.

@@ -94,7 +94,9 @@ $handlerMap = @{
 }
 
 $configPath = Join-Path -Path $demoRoot -ChildPath 'menus\sample.menu.psd1'
-$menu = Import-PsMenuConfig -Path $configPath -HandlerMap $handlerMap
+$menuRoot = Join-Path -Path $demoRoot -ChildPath 'menus'
+# -AllowedRoot keeps config loads under the demo menus folder (enterprise pattern)
+$menu = Import-PsMenuConfig -Path $configPath -HandlerMap $handlerMap -AllowedRoot $menuRoot
 
 Write-PsMenuBanner -Lines @(
     'PsMenuKit Demo'

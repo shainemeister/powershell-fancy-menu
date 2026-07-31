@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit
 description: Modular pure-PowerShell 5.1 console menu kit (package overview).
-version: "0.2.0"
+version: "0.2.1"
 status: current
 audience:
   - developers
@@ -89,18 +89,24 @@ else {
 }
 ```
 
+## Enterprise / IT
+
+PsMenuKit is designed for **enterprise-compatible** use: current user only, offline kit code, zero runtime Gallery deps, config-as-data (not code). Read **[SECURITY.md](./SECURITY.md)** before production rollout. Prefer `Import-PsMenuConfig -AllowedRoot` and [demos/Launch.Enterprise.cmd](../../demos/Launch.Enterprise.cmd) over permanent ExecutionPolicy changes.
+
 ## Related docs
 
 | Doc | Purpose |
 |-----|---------|
 | [CLI-GUIDE.md](./CLI-GUIDE.md) | Public function contract, results, exit codes |
 | [METHODOLOGY.md](./METHODOLOGY.md) | Composition model and extension rules |
-| [SECURITY.md](./SECURITY.md) | Trust boundary and launcher policy |
-| [demos/Launch.cmd](../../demos/Launch.cmd) | Windows `.cmd` backbone demo |
+| [SECURITY.md](./SECURITY.md) | Trust boundary, ban list, IT allowances |
+| [demos/Launch.cmd](../../demos/Launch.cmd) | Lab demo launcher |
+| [demos/Launch.Enterprise.cmd](../../demos/Launch.Enterprise.cmd) | Enterprise launcher pattern |
 
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.2.1 | Enterprise security close-out (SECURITY, Config controls) |
 | 0.2.0 | All planned feature modules shipped |
 | 0.1.0 | Initial Core package overview |
