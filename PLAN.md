@@ -46,7 +46,7 @@ See repository tree: `kit/` (standards), `packages/PsMenuKit/` (product), `demos
 | 1 | Core engine + Launch.cmd demo | **Done** (0.1.0) |
 | 2 | Feature modules + enterprise security | **Done** (0.2.0 / 0.2.1) |
 | 3 | Hardening + verification | **Done** (0.3.0) |
-| 4 | Polish (themes, consumer templates) | Optional |
+| 4 | Adoption + cert + enterprise Launch + quality | **Done** (0.4.0) |
 
 ## Success criteria
 

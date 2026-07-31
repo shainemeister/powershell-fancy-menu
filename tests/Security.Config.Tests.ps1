@@ -122,5 +122,13 @@ Assert-Throws -Like '*UNC*' -Script {
     Import-PsMenuConfig -Path '\\server\share\menu.psd1' -HandlerMap $handlers
 }
 
+# JSON config load
+$jsonPath = Join-Path $fixtures 'sample.menu.json'
+$jsonHandlers = @{ Hello = { 'h' }; About = { 'a' } }
+$jsonMenu = Import-PsMenuConfig -Path $jsonPath -HandlerMap $jsonHandlers -AllowedRoot $fixtures
+if ($jsonMenu.Title -ne 'JSON Sample Menu') { throw 'JSON config title mismatch' }
+if ($jsonMenu.Items.Count -lt 2) { throw 'JSON config items missing' }
+if ($null -eq $jsonMenu.Items[0].Action) { throw 'JSON HandlerMap action not bound' }
+
 Write-Host 'Security.Config.Tests OK' -ForegroundColor Green
 exit 0

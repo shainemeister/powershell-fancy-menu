@@ -71,8 +71,11 @@ function Show-PsMenu {
             return New-PsMenuResult -Cancelled $true -Reason 'EmptyMenu'
         }
 
+        # Resolve feature commands once per menu session (hot path)
         $searchEnabled = $null -ne (Get-Command -Name 'Select-PsMenuItem' -ErrorAction SilentlyContinue)
         $multiAvailable = $null -ne (Get-Command -Name 'Set-PsMenuItemSelection' -ErrorAction SilentlyContinue)
+        $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
+        $nestedCmd = Get-Command -Name 'Show-PsMenuNested' -ErrorAction SilentlyContinue
         $multiSelectMode = $false
         if ($multiAvailable -and $null -ne $Menu.PSObject.Properties['MultiSelect'] -and [bool]$Menu.MultiSelect) {
             $multiSelectMode = $true
@@ -165,13 +168,12 @@ function Show-PsMenu {
                     if ($selectedItems.Count -eq 0) {
                         $item = $visibleItems[$selectedIndex]
                         if (-not (Test-PsMenuItemEnabled -Item $item)) { continue }
-                        $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
+                        $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth -ConfirmCommand $confirmCmd -NestedCommand $nestedCmd
                         if ($act.Continue) { continue }
                         $finalResult = $act.Result
                         break
                     }
 
-                    $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
                     $batchCancelled = $false
                     foreach ($si in $selectedItems) {
                         if ($null -ne $confirmCmd -and $null -ne $si.PSObject.Properties['ConfirmMessage'] -and -not [string]::IsNullOrWhiteSpace([string]$si.ConfirmMessage)) {
@@ -198,7 +200,7 @@ function Show-PsMenu {
 
                 $item = $visibleItems[$selectedIndex]
                 if (-not (Test-PsMenuItemEnabled -Item $item)) { continue }
-                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
+                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth -ConfirmCommand $confirmCmd -NestedCommand $nestedCmd
                 if ($act.Continue) { continue }
                 $finalResult = $act.Result
                 break
@@ -218,7 +220,7 @@ function Show-PsMenu {
                             $selectedIndex = $hotIdx
                             if (-not $multiSelectMode) {
                                 $item = $visibleItems[$selectedIndex]
-                                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
+                                $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth -ConfirmCommand $confirmCmd -NestedCommand $nestedCmd
                                 if (-not $act.Continue) {
                                     $finalResult = $act.Result
                                     break
@@ -246,7 +248,7 @@ function Show-PsMenu {
                         $selectedIndex = $hotIdx
                         if (-not $multiSelectMode) {
                             $item = $visibleItems[$selectedIndex]
-                            $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth
+                            $act = Invoke-PsMenuActivateItem -Menu $Menu -Item $item -ThemeTable $themeTable -NestDepth $NestDepth -MaxNestDepth $MaxNestDepth -ConfirmCommand $confirmCmd -NestedCommand $nestedCmd
                             if (-not $act.Continue) {
                                 $finalResult = $act.Result
                                 break
@@ -384,10 +386,15 @@ function Invoke-PsMenuActivateItem {
         [pscustomobject]$Item,
         [hashtable]$ThemeTable,
         [int]$NestDepth = 0,
-        [int]$MaxNestDepth = 8
+        [int]$MaxNestDepth = 8,
+        [object]$ConfirmCommand,
+        [object]$NestedCommand
     )
 
-    $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
+    $confirmCmd = $ConfirmCommand
+    if ($null -eq $confirmCmd) {
+        $confirmCmd = Get-Command -Name 'Read-PsMenuConfirm' -ErrorAction SilentlyContinue
+    }
     $confirmMsg = $null
     if ($null -ne $Item.PSObject.Properties['ConfirmMessage']) {
         $confirmMsg = $Item.ConfirmMessage
@@ -403,7 +410,10 @@ function Invoke-PsMenuActivateItem {
     if ($null -ne $Item.PSObject.Properties['Children'] -and $null -ne $Item.Children -and @($Item.Children).Count -gt 0) {
         $hasChildren = $true
     }
-    $nestedCmd = Get-Command -Name 'Show-PsMenuNested' -ErrorAction SilentlyContinue
+    $nestedCmd = $NestedCommand
+    if ($null -eq $nestedCmd) {
+        $nestedCmd = Get-Command -Name 'Show-PsMenuNested' -ErrorAction SilentlyContinue
+    }
     if ($hasChildren -and $null -ne $nestedCmd) {
         $nextDepth = $NestDepth + 1
         if ($nextDepth -gt $MaxNestDepth) {

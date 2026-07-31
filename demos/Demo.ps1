@@ -1,35 +1,31 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    PsMenuKit interactive demo (Windows PowerShell 5.1) - Core + all feature modules.
+    PsMenuKit interactive demo (Windows PowerShell 5.1).
 .DESCRIPTION
-    Launched by Launch.cmd. Demonstrates Theme, Status, Confirm, Nested, Search,
-    MultiSelect, and Config composition.
+    Launched by Launch.cmd (enterprise-standard). Demonstrates Theme, Status,
+    Confirm, Nested, Search, MultiSelect, and Config composition.
+.PARAMETER MultiSelect
+    Load the multi-select sample menu instead of the default sample.
 #>
+[CmdletBinding()]
+param(
+    [switch]$MultiSelect
+)
+
 $ErrorActionPreference = 'Stop'
 
 $demoRoot = $PSScriptRoot
 $repoRoot = Split-Path -Parent $demoRoot
-$pkgRoot = Join-Path -Path $repoRoot -ChildPath 'packages\PsMenuKit'
+$pkgManifest = Join-Path -Path $repoRoot -ChildPath 'packages\PsMenuKit\PsMenuKit.psd1'
 
-function Import-PsMenuKitModule {
-    param([string]$RelativePath)
-    $path = Join-Path -Path $pkgRoot -ChildPath $RelativePath
-    if (-not (Test-Path -LiteralPath $path)) {
-        throw "Module not found: $path"
-    }
-    Import-Module -Name $path -Force
+if (-not (Test-Path -LiteralPath $pkgManifest)) {
+    Write-Error "PsMenuKit package not found: $pkgManifest"
+    exit 1
 }
 
-# Core first, then features (order matches capability dependencies)
-Import-PsMenuKitModule 'src\Core\PsMenuKit.Core.psd1'
-Import-PsMenuKitModule 'src\Modules\Theme\PsMenuKit.Theme.psd1'
-Import-PsMenuKitModule 'src\Modules\Status\PsMenuKit.Status.psd1'
-Import-PsMenuKitModule 'src\Modules\Confirm\PsMenuKit.Confirm.psd1'
-Import-PsMenuKitModule 'src\Modules\Nested\PsMenuKit.Nested.psd1'
-Import-PsMenuKitModule 'src\Modules\Search\PsMenuKit.Search.psd1'
-Import-PsMenuKitModule 'src\Modules\MultiSelect\PsMenuKit.MultiSelect.psd1'
-Import-PsMenuKitModule 'src\Modules\Config\PsMenuKit.Config.psd1'
+# Single root import (nested modules load Core + features)
+Import-Module -Name $pkgManifest -Force
 
 Set-PsMenuTheme -Name 'Dark' | Out-Null
 
@@ -82,37 +78,50 @@ function Show-DemoResult {
     }
 }
 
-# Handler map for Config-loaded sample menu
 $handlerMap = @{
     Hello   = { return 'Hello from config-driven HandlerMap.' }
     Time    = { return (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') }
     Version = { return $PSVersionTable.PSVersion.ToString() }
-    About   = { return 'PsMenuKit 0.2.0 - modular pure-PS menu framework.' }
+    About   = { return 'PsMenuKit 0.4.0 - modular pure-PS menu framework.' }
     NestedA = { return 'Nested action A' }
     NestedB = { return 'Nested action B' }
     Wipe    = { return 'Simulated wipe complete (demo).' }
+    PickA   = { return 'Picked A' }
+    PickB   = { return 'Picked B' }
+    PickC   = { return 'Picked C' }
 }
 
-$configPath = Join-Path -Path $demoRoot -ChildPath 'menus\sample.menu.psd1'
 $menuRoot = Join-Path -Path $demoRoot -ChildPath 'menus'
-# -AllowedRoot keeps config loads under the demo menus folder (enterprise pattern)
+if ($MultiSelect) {
+    $configPath = Join-Path -Path $menuRoot -ChildPath 'sample-multi.menu.psd1'
+    $bannerLines = @(
+        'PsMenuKit Demo (MultiSelect)'
+        'Space=toggle  Enter=batch'
+    )
+    $hint = 'Space toggles; Enter runs selected'
+}
+else {
+    $configPath = Join-Path -Path $menuRoot -ChildPath 'sample.menu.psd1'
+    $bannerLines = @(
+        'PsMenuKit Demo'
+        'Core + Theme Status Confirm Nested'
+        'Search MultiSelect Config'
+    )
+    $hint = 'type to filter'
+}
+
 $menu = Import-PsMenuConfig -Path $configPath -HandlerMap $handlerMap -AllowedRoot $menuRoot
 
-Write-PsMenuBanner -Lines @(
-    'PsMenuKit Demo'
-    'Core + Theme Status Confirm Nested'
-    'Search MultiSelect Config'
-) -ThemeName 'Dark'
-
+Write-PsMenuBanner -Lines $bannerLines -ThemeName 'Dark'
 Write-Host ''
-Write-Host 'Starting menu in 1s...' -ForegroundColor DarkGray
-Start-Sleep -Seconds 1
+Write-Host 'Tip: re-run with -MultiSelect for batch selection demo.' -ForegroundColor DarkGray
+Write-Host 'Starting menu...' -ForegroundColor DarkGray
 
 $lastResult = $null
 
 try {
     while ($true) {
-        $status = New-PsMenuStatusLine -IncludeUser -IncludeTime -LastResult $lastResult -Text 'type to filter'
+        $status = New-PsMenuStatusLine -IncludeUser -IncludeTime -LastResult $lastResult -Text $hint
         $result = Show-PsMenu -Menu $menu -Theme 'Dark' -StatusLine $status
         $lastResult = $result
         if ($result.Cancelled) {

@@ -8,6 +8,27 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.4.0] - 2026-07-30
+
+#### Added
+
+- `certification/` repo-kit self-attestation: `README.md` + `New-Certification.ps1` (Domain A/B gates -> gitignored JSON/TXT)
+- `templates/consumer-launch/` enterprise starter (Launch.cmd, App.ps1, sample menu)
+- MultiSelect demo: `demos/menus/sample-multi.menu.psd1` and `Demo.ps1 -MultiSelect`
+- JSON config fixture + automated load test
+- Core caches Confirm/Nested (and related) command lookups once per menu session
+
+#### Changed
+
+- **Single enterprise demo launcher:** `demos/Launch.cmd` (no `-ExecutionPolicy Bypass`)
+- Demo imports root `PsMenuKit.psd1` once; removed 1s startup delay
+- SECURITY / CLI-GUIDE / MANUAL / kit RULES: enterprise Launch only; Bypass reserved for developer gates
+- Package version **0.4.0**
+
+#### Removed
+
+- `demos/Launch.Enterprise.cmd` (merged into `Launch.cmd`)
+
 ### [0.3.1] - 2026-07-30
 
 #### Fixed

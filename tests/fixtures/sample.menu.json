@@ -1,0 +1,20 @@
+{
+  "Title": "JSON Sample Menu",
+  "Subtitle": "Loaded via ConvertFrom-Json",
+  "Theme": "Default",
+  "MultiSelect": false,
+  "Items": [
+    {
+      "Id": "hello",
+      "Label": "Say hello",
+      "Hotkey": "h",
+      "Handler": "Hello"
+    },
+    {
+      "Id": "about",
+      "Label": "About",
+      "Hotkey": "a",
+      "Handler": "About"
+    }
+  ]
+}

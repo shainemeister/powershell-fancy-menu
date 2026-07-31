@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit
 description: Modular pure-PowerShell 5.1 console menu kit (package overview).
-version: "0.3.0"
+version: "0.4.0"
 status: current
 audience:
   - developers
@@ -91,7 +91,7 @@ else {
 
 ## Enterprise / IT
 
-PsMenuKit is designed for **enterprise-compatible** use: current user only, offline kit code, zero runtime Gallery deps, config-as-data (not code). Read **[SECURITY.md](./SECURITY.md)** before production rollout. Prefer `Import-PsMenuConfig -AllowedRoot` and [demos/Launch.Enterprise.cmd](../../demos/Launch.Enterprise.cmd) over permanent ExecutionPolicy changes.
+PsMenuKit is designed for **enterprise-compatible** use: current user only, offline kit code, zero runtime Gallery deps, config-as-data (not code). Read **[SECURITY.md](./SECURITY.md)** before production rollout. Prefer `Import-PsMenuConfig -AllowedRoot` and enterprise [demos/Launch.cmd](../../demos/Launch.cmd) (no Bypass) over permanent ExecutionPolicy changes.
 
 ## Related docs
 
@@ -100,13 +100,15 @@ PsMenuKit is designed for **enterprise-compatible** use: current user only, offl
 | [CLI-GUIDE.md](./CLI-GUIDE.md) | Public function contract, results, exit codes |
 | [METHODOLOGY.md](./METHODOLOGY.md) | Composition model and extension rules |
 | [SECURITY.md](./SECURITY.md) | Trust boundary, ban list, IT allowances |
-| [demos/Launch.cmd](../../demos/Launch.cmd) | Lab demo launcher |
-| [demos/Launch.Enterprise.cmd](../../demos/Launch.Enterprise.cmd) | Enterprise launcher pattern |
+| [demos/Launch.cmd](../../demos/Launch.cmd) | Enterprise-standard demo launcher |
+| [templates/consumer-launch/](../../templates/consumer-launch/) | Consumer starter |
+| [certification/README.md](../../certification/README.md) | Dev quality/security self-attestation |
 
 ## Document history
 
 | Version | Notes |
 |---------|--------|
+| 0.4.0 | Enterprise Launch only; cert + consumer template pointers |
 | 0.3.0 | Console restore, edges, nest depth, Run-AllGates |
 | 0.2.1 | Enterprise security close-out (SECURITY, Config controls) |
 | 0.2.0 | All planned feature modules shipped |

@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit Security
 description: Trust boundary, unacceptable patterns, IT allowances, and validation for the pure-PowerShell menu kit.
-version: "0.3.0"
+version: "0.4.0"
 status: current
 audience:
   - security
@@ -14,7 +14,7 @@ related:
   - ./METHODOLOGY.md
   - ../../kit/rules/security.md
   - ../../demos/Launch.cmd
-  - ../../demos/Launch.Enterprise.cmd
+  - ../../certification/README.md
   - ../../tests/MANUAL.md
   - ../../tests/Run-AllGates.ps1
 last_updated: "2026-07-30"
@@ -24,7 +24,7 @@ last_updated: "2026-07-30"
 
 Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free interactive console menu framework for **Windows PowerShell 5.1**.
 
-**Package version:** 0.3.0  
+**Package version:** 0.4.0  
 **Package folder:** `packages/PsMenuKit/`  
 **Runtime:** Windows PowerShell 5.1 (`powershell.exe`) - zero product runtime dependencies
 
@@ -34,7 +34,7 @@ Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free
 
 ## Summary
 
-PsMenuKit runs **locally under the current user**, with **no network access** from kit modules, **no elevation**, and **no secrets handling**. Menu data files are **structure only**; executable behavior comes only from **host-supplied** scriptblocks (`HandlerMap` / `Action`). The demo launcher may use `-ExecutionPolicy Bypass` for local convenience; **enterprise** launches must not permanently weaken host policy.
+PsMenuKit runs **locally under the current user**, with **no network access** from kit modules, **no elevation**, and **no secrets handling**. Menu data files are **structure only**; executable behavior comes only from **host-supplied** scriptblocks (`HandlerMap` / `Action`). The default demo launcher (`demos/Launch.cmd`) uses the **enterprise** pattern (no Bypass, no permanent policy change).
 
 Aligned with repo-kit security baseline: privilege, network, secrets, dependencies, and host-policy rules in [kit/rules/security.md](../../kit/rules/security.md).
 
@@ -109,7 +109,7 @@ Current user session -> host script (trusted HandlerMap)
 | `Import-PowerShellDataFile` | Local `.psd1` menu **data** only |
 | `ConvertFrom-Json` | Local `.json` menu **data** only |
 | Host `scriptblock` Actions / HandlerMap | Trusted, reviewed host application code |
-| Demo `-ExecutionPolicy Bypass` | **Local demo only** - see [Launcher policy](#7-launcher-policy) |
+| Demo launcher Bypass | **Not used** - enterprise `Launch.cmd` only; Bypass may appear in **developer test runners** only |
 
 ---
 
@@ -185,34 +185,31 @@ Current user session -> host script (trusted HandlerMap)
 
 ## 8. Launcher policy
 
-### Demo (lab / developer)
+### Demo (enterprise-standard default)
 
 [`demos/Launch.cmd`](../../demos/Launch.cmd):
 
 ```text
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ...\Demo.ps1
+powershell.exe -NoProfile -File ...\Demo.ps1
 ```
 
 | Rule | Detail |
 |------|--------|
-| Scope | Local repository demo only |
-| Must not | Be copied as the default production install without IT review |
 | Profile | `-NoProfile` avoids user-profile injection |
-
-### Enterprise (preferred pattern)
-
-[`demos/Launch.Enterprise.cmd`](../../demos/Launch.Enterprise.cmd):
-
-- Uses `-NoProfile`  
-- Does **not** set permanent ExecutionPolicy  
-- Relies on existing policy (e.g. RemoteSigned / AllSigned) or IT-approved process  
-- Documents that unsigned Bypass is a **lab** option only  
+| ExecutionPolicy flag | **Not** passed (no Bypass on demo path) |
+| Permanent policy | Never changed by this launcher |
+| Host policy | Relies on existing RemoteSigned / AllSigned / IT process |
+| On failure | Hints to signed scripts / approved process; no Unrestricted advice |
 
 Production hosts should:
 
 1. Place kit + host scripts under an approved path.  
 2. Prefer signed scripts where policy requires it.  
 3. Pass `-AllowedRoot` when calling `Import-PsMenuConfig`.  
+
+### Developer gates (not product install)
+
+`tests\Run-AllGates.ps1` and `certification\New-Certification.ps1` may use `-ExecutionPolicy Bypass` so CI/dev machines can run gates without changing machine policy. That is **developer tooling only**.
 
 ---
 
@@ -224,6 +221,12 @@ Developer tooling only - not product runtime dependencies. Declared Domain B/A g
 
 ```bat
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
+```
+
+**Formal certification pair** (gitignored outputs):
+
+```bat
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File certification\New-Certification.ps1
 ```
 
 **Interactive checklist:** [tests/MANUAL.md](../../tests/MANUAL.md)
@@ -256,14 +259,15 @@ gitleaks detect --source .
 | Config = data only | Prevent config-as-RCE |
 | HandlerMap = host trust | Explicit code ownership for IT review |
 | No network in kit | Clear offline boundary |
-| Dual launchers | Demo convenience without forcing production Bypass |
+| Single enterprise Launch.cmd | No Bypass on product demo path |
 | Ban-list tests | Regression guard against exploitive APIs |
+| Certification folder | Self-attestation for IT packets; not a product gate |
 
 ---
 
 ## 11. Statement for reviewers
 
-> PsMenuKit is a **local, current-user, offline** PowerShell console menu framework with **no product runtime dependencies**. It does not elevate privileges, phone home, or execute menu configuration files as code. Executable behavior is limited to **host-supplied scriptblocks**. Demo `-ExecutionPolicy Bypass` is for local lab use; enterprise deployments should use approved paths, preferred signing policy, and `Import-PsMenuConfig -AllowedRoot`. This document is a **self-attested trust description**, not a third-party certification.
+> PsMenuKit is a **local, current-user, offline** PowerShell console menu framework with **no product runtime dependencies**. It does not elevate privileges, phone home, or execute menu configuration files as code. Executable behavior is limited to **host-supplied scriptblocks**. The default demo launcher uses an **enterprise** pattern (no ExecutionPolicy Bypass). Developer gate runners may use Bypass for CI only. Prefer approved paths, signing where required, and `Import-PsMenuConfig -AllowedRoot`. This document is a **self-attested trust description**, not a third-party certification.
 
 ---
 
@@ -272,9 +276,9 @@ gitleaks detect --source .
 | Path | Role |
 |------|------|
 | `packages/PsMenuKit/src/**` | Product modules (ban-list scoped) |
-| `demos/Launch.cmd` | Demo launcher (Bypass, local) |
-| `demos/Launch.Enterprise.cmd` | Enterprise-oriented launcher pattern |
+| `demos/Launch.cmd` | Enterprise-standard demo launcher |
 | `demos/menus/sample.menu.psd1` | Sample config (no secrets) |
+| `certification/` | Quality + security self-attestation (dev only) |
 | `tests/Run-AllGates.ps1` | Single Domain B + kit security gate entrypoint |
 | `tests/Run-ScriptAnalyzer.ps1` | Domain A wrapper |
 | `tests/MANUAL.md` | Interactive checklist |
@@ -289,6 +293,7 @@ gitleaks detect --source .
 
 | Version | Notes |
 |---------|--------|
+| 0.4.0 | Single enterprise Launch.cmd; certification pointer; Bypass only for dev gates |
 | 0.3.0 | Supported environments matrix; Run-AllGates validation; console restore notes |
-| 0.2.1 | Full TEMPLATE-SECURITY shape; enterprise launcher; Config controls; validation gates |
+| 0.2.1 | Full TEMPLATE-SECURITY shape; Config controls; validation gates |
 | 0.1.0 | Initial trust boundary for Core + demo launcher |

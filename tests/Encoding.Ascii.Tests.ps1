@@ -12,6 +12,8 @@ $roots = @(
     (Join-Path $repoRoot 'tests')
     (Join-Path $repoRoot 'kit')
     (Join-Path $repoRoot 'tools')
+    (Join-Path $repoRoot 'templates')
+    (Join-Path $repoRoot 'certification')
 )
 
 $failed = $false

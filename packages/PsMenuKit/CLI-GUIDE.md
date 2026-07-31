@@ -1,7 +1,7 @@
 ---
 title: PsMenuKit CLI / Module Contract
 description: Public surface, parameters, result objects, and host exit-code guidance.
-version: "0.3.0"
+version: "0.4.0"
 status: current
 audience:
   - developers
@@ -156,26 +156,28 @@ Suggested mapping for launcher scripts (not enforced by Core):
 
 ## Launcher demo
 
-**Lab / developer** (local Bypass - not a permanent host policy change):
+Enterprise-standard demo entry (default name `Launch.cmd`):
 
 ```cmd
 demos\Launch.cmd
 ```
 
-Invokes `powershell.exe -NoProfile -ExecutionPolicy Bypass -File demos\Demo.ps1`.
-
-**Enterprise pattern** (no Bypass; relies on existing policy / signing):
+Invokes `powershell.exe -NoProfile -File demos\Demo.ps1` (**no** `-ExecutionPolicy Bypass`). MultiSelect sample:
 
 ```cmd
-demos\Launch.Enterprise.cmd
+cd demos
+powershell.exe -NoProfile -File Demo.ps1 -MultiSelect
 ```
 
 See [SECURITY.md](./SECURITY.md) for IT allowances and trust boundary.
 
 ## Verification
 
+Developer tooling only:
+
 ```cmd
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File certification\New-Certification.ps1
 ```
 
 Interactive: [tests/MANUAL.md](../../tests/MANUAL.md)
@@ -184,7 +186,8 @@ Interactive: [tests/MANUAL.md](../../tests/MANUAL.md)
 
 | Version | Notes |
 |---------|--------|
+| 0.4.0 | Single enterprise Launch.cmd; certification pointer; MultiSelect demo |
 | 0.3.0 | Nest depth, display text, console restore, edge cases, gates |
-| 0.2.1 | Config security parameters; dual launcher docs |
+| 0.2.1 | Config security parameters; launcher docs |
 | 0.2.0 | Feature modules + Search/MultiSelect keyboard contract |
 | 0.1.0 | Initial Core contract |

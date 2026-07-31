@@ -2,11 +2,13 @@
 
 Run on **Windows PowerShell 5.1** with a real console (conhost or Windows Terminal).
 
-## Lab demo
+## Demo (enterprise Launch.cmd)
 
 ```cmd
 demos\Launch.cmd
 ```
+
+Uses enterprise pattern: `-NoProfile`, **no** `-ExecutionPolicy Bypass`. Host policy must allow local scripts.
 
 | # | Step | Expected |
 |---|------|----------|
@@ -23,27 +25,26 @@ demos\Launch.cmd
 | 11 | Esc or Q with empty filter | Exit code 0; **cursor visible**; title restored |
 | 12 | Optional: Ctrl+C mid-menu | Note host behavior; restore is best-effort (see SECURITY) |
 
-## Enterprise launcher
+## MultiSelect demo
 
 ```cmd
-demos\Launch.Enterprise.cmd
+cd demos
+powershell.exe -NoProfile -File Demo.ps1 -MultiSelect
 ```
 
 | # | Step | Expected |
 |---|------|----------|
-| 1 | Run under normal policy | Starts if scripts allowed; else clear policy error (no permanent Unrestricted advice) |
-| 2 | Same critical path as lab | Behavior matches demo script |
+| 1 | Space on items | `[x]` markers toggle |
+| 2 | Enter with markers | Batch actions / MultiSelected reason |
+| 3 | Enter with none marked | Activates focused item |
 
-## Automated gates (non-interactive)
+## Automated gates (developer tooling)
 
-From repo root:
+From repo root (Bypass allowed for **gates only**, not product install):
 
 ```cmd
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-AllGates.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File certification\New-Certification.ps1
 ```
 
-Optional analyzer (when installed):
-
-```cmd
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Run-ScriptAnalyzer.ps1
-```
+Do not commit `certification/last_certification.*`.

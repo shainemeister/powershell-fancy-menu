@@ -99,7 +99,9 @@ Replace paths below with your project's real files. Rows that do not apply may b
 | Language surface inventory | [Language surface inventory](#language-surface-inventory) (this file) |
 | Default sample menu config | [demos/menus/sample.menu.psd1](../demos/menus/sample.menu.psd1) |
 | Golden tests / fixtures | [tests/](../tests/) / [tests/fixtures/](../tests/fixtures/) |
-| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) / [demos/Launch.Enterprise.cmd](../demos/Launch.Enterprise.cmd) / [demos/Demo.ps1](../demos/Demo.ps1) |
+| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) / [demos/Demo.ps1](../demos/Demo.ps1) |
+| Security and code-validation certification | [certification/README.md](../certification/README.md) |
+| Consumer launch template | [templates/consumer-launch/](../templates/consumer-launch/) |
 
 **Rule:** Adding, removing, or renaming intentional source files should update the inventory (catalog or equivalent) in the same change set when the project maintains one.
 
@@ -108,7 +110,7 @@ Replace paths below with your project's real files. Rows that do not apply may b
 | Surface | Domain B (validation) | Domain A (security) | Notes |
 |---------|----------------------|---------------------|--------|
 | **PowerShell** product code | `tests/Parse-Gate.ps1` exit 0; `tests/Core.Model.Tests.ps1`; `tests/Feature.Modules.Tests.ps1`; PS 5.1 only | **PSScriptAnalyzer** `-Severity Error` (developer tooling; required when installed - missing tool fails ship of security-sensitive change sets); kit ban-list `tests/Security.BanList.Tests.ps1`; Config path tests `tests/Security.Config.Tests.ps1` | Runtime: Windows PowerShell 5.1; **zero** product deps; no network/elevation in kit |
-| **Shell** product (`.cmd` launchers) | Documented launcher checklist in [SECURITY.md](../packages/PsMenuKit/SECURITY.md) | Manual review; no download-and-run; dual launchers (demo Bypass vs enterprise) | Windows primary |
+| **Shell** product (`.cmd` launchers) | Documented launcher checklist in [SECURITY.md](../packages/PsMenuKit/SECURITY.md) | Manual review; no download-and-run; enterprise `Launch.cmd` (no Bypass) | Windows primary |
 | **Secrets** (optional enterprise) | - | **Gitleaks** `gitleaks detect` when team enables secrets scanning | Prefer enable for enterprise releases |
 
 ### Verification before ship
@@ -119,9 +121,10 @@ Replace paths below with your project's real files. Rows that do not apply may b
 | Public API | Contract in CLI-GUIDE matches exports; smoke import in demo |
 | Domain B + kit security (primary) | `powershell.exe -NoProfile -File tests\Run-AllGates.ps1` exit 0 |
 | Domain A (PSScriptAnalyzer) | Included optionally in Run-AllGates; or `tests\Run-ScriptAnalyzer.ps1` (exit 0 pass, exit 2 skip if missing, exit 1 fail). Use `-RequireAnalyzer` / `-RequireModule` when CI has the module. |
+| Formal certification | `certification\New-Certification.ps1`; OverallPass true; do not stage `last_certification.*` |
 | Domain A (Secrets, if inventory enabled) | `gitleaks detect --source .` clean |
 | Docs / contracts | Authority map paths resolve; SECURITY.md matches behavior; no leftover `{{PLACEHOLDERS}}` |
-| Launcher | Double-click `demos\Launch.cmd`; review `demos\Launch.Enterprise.cmd` for enterprise path |
+| Launcher | Double-click `demos\Launch.cmd` (enterprise-standard; no Bypass) |
 | Security / trust | [packages/PsMenuKit/SECURITY.md](../packages/PsMenuKit/SECURITY.md) co-updated with execution/launcher/config changes |
 
 ---
@@ -163,7 +166,7 @@ Fill and keep this table in every adopting project's **`kit/RULES.md`**. Update 
 | Runtime | Windows PowerShell **5.1** (`powershell.exe`) only as first-class |
 | Dependencies | **Zero** runtime dependencies (no Gallery modules, no NuGet) |
 | Composition | Core engine + optional feature modules joined at the consumer script layer |
-| Entry points | `demos/Launch.cmd` for demo; public module functions for consumers |
+| Entry points | Enterprise `demos/Launch.cmd` for demo; public module functions for consumers; certification is developer-only |
 
 At adopt time: read the kit's [CHANGELOG.md](./CHANGELOG.md) (latest released `### [X.Y.Z]` under `## repo-kit`), set **Adopted kit version** and **Adopted on**, keep **Kit source** as above, then delete or archive `SETUP.md`. Prefer keeping or re-fetching [UPGRADE.md](./UPGRADE.md) for later bumps.
 
