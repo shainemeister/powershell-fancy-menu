@@ -22,7 +22,7 @@ Operator guide for the **formal, regenerable** security and code-validation cert
 **Document version:** {{VERSION}}  
 **Status:** draft  
 
-**Related:** [Security and code-validation certification](../rules/security.md#security-and-code-validation-certification) | [Language surface inventory](../rules/security.md#language-surface-inventory) | [RULES.md](../RULES.md)
+**Related:** [Security and code-validation certification](../rules/security.md#security-and-code-validation-certification) / [Language surface inventory](../rules/security.md#language-surface-inventory) / [RULES.md](../RULES.md)
 
 ---
 

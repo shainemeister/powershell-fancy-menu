@@ -20,7 +20,7 @@ Structural rules for how packages and runtimes relate. Public surfaces those pac
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) | [contracts.md](./contracts.md) | [security.md](./security.md)
+**Related:** [RULES.md](../RULES.md) / [contracts.md](./contracts.md) / [security.md](./security.md)
 
 ---
 

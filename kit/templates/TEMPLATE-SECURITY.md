@@ -22,7 +22,7 @@ last_updated: "{{LAST_UPDATED}}"
 **Package folder:** `{{FOLDER_NAME}}/`  
 **Runtime:** {{RUNTIME}}
 
-**Related docs:** [README.md](./README.md) | [CLI-GUIDE.md](./CLI-GUIDE.md)
+**Related docs:** [README.md](./README.md) / [CLI-GUIDE.md](./CLI-GUIDE.md)
 
 ---
 

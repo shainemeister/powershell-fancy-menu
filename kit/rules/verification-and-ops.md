@@ -24,7 +24,7 @@ Ship gates, completion rules, cadence, anti-patterns, and the contributor checkl
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) | [security.md](./security.md) | [authoring-and-style.md](./authoring-and-style.md) | [contracts.md](./contracts.md) | [versioning-and-git.md](./versioning-and-git.md) | [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) | [UPGRADE.md](../UPGRADE.md)
+**Related:** [RULES.md](../RULES.md) / [security.md](./security.md) / [authoring-and-style.md](./authoring-and-style.md) / [contracts.md](./contracts.md) / [versioning-and-git.md](./versioning-and-git.md) / [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) / [UPGRADE.md](../UPGRADE.md)
 
 ---
 

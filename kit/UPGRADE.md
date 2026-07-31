@@ -23,7 +23,7 @@ Durable procedure for **repositories that already adopted** the Repository Stand
 
 **Document version:** 1.1.0  
 
-**Related:** [RULES.md](./RULES.md) | [SETUP.md](./SETUP.md) | [CHANGELOG.md](./CHANGELOG.md) | [README.md](../README.md) | [versioning-and-git.md](./rules/versioning-and-git.md) | [hygiene.md](./rules/hygiene.md)
+**Related:** [RULES.md](./RULES.md) / [SETUP.md](./SETUP.md) / [CHANGELOG.md](./CHANGELOG.md) / [README.md](../README.md) / [versioning-and-git.md](./rules/versioning-and-git.md) / [hygiene.md](./rules/hygiene.md)
 
 ---
 
@@ -33,7 +33,7 @@ Durable procedure for **repositories that already adopted** the Repository Stand
 |-----------|-----|
 | **No** Kit baseline / never adopted | Stop - use [SETUP.md](./SETUP.md) (first adopt) |
 | Baseline >= 2.0 **and** standards already under `kit/` | [Routine upgrade procedure](#routine-upgrade-procedure) |
-| Baseline **&lt; 2.0** **or** standards still on **project root** (1.x layout) | [Migrate from kit 1.x / root layout to 2.x](#migrate-from-kit-1x--root-layout-to-2x) then routine steps for remaining deltas |
+| Baseline **&lt; 2.0** **or** standards still on **project root** (1.x layout) / [Migrate from kit 1.x / root layout to 2.x](#migrate-from-kit-1x--root-layout-to-2x) then routine steps for remaining deltas |
 
 **Prerequisite:** Kit baseline table exists (in `kit/RULES.md`, or root `RULES.md` until migrated). See [Kit baseline](./RULES.md#kit-baseline).
 

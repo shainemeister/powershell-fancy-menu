@@ -27,7 +27,7 @@ A repeatable standard for professional, consistent markdown in any repository - 
 **Location:** `kit/MARKDOWN-STANDARD.md`  
 **Templates:** [`templates/`](./templates/)
 
-**Related:** [README.md](../README.md) | [RULES.md](./RULES.md) | [contracts.md](./rules/contracts.md) | [authoring-and-style.md](./rules/authoring-and-style.md) | [templates/TEMPLATE-GENERIC.md](./templates/TEMPLATE-GENERIC.md) | [templates/TEMPLATE-README.md](./templates/TEMPLATE-README.md)
+**Related:** [README.md](../README.md) / [RULES.md](./RULES.md) / [contracts.md](./rules/contracts.md) / [authoring-and-style.md](./rules/authoring-and-style.md) / [templates/TEMPLATE-GENERIC.md](./templates/TEMPLATE-GENERIC.md) / [templates/TEMPLATE-README.md](./templates/TEMPLATE-README.md)
 
 ---
 

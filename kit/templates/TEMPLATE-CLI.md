@@ -19,7 +19,7 @@ last_updated: "{{LAST_UPDATED}}"
 
 **Package version:** {{VERSION}}  
 
-**Related docs:** [README.md](./README.md) | [SECURITY.md](./SECURITY.md)
+**Related docs:** [README.md](./README.md) / [SECURITY.md](./SECURITY.md)
 
 | Item | Value |
 |------|--------|

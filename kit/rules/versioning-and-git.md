@@ -21,7 +21,7 @@ Version surfaces, CHANGELOG discipline, and git / commit rules.
 
 **Document version:** 1.0.1  
 
-**Related:** [RULES.md](../RULES.md) | [UPGRADE.md](../UPGRADE.md) | [CHANGELOG.md](../CHANGELOG.md) | [contracts.md](./contracts.md) | [verification-and-ops.md](./verification-and-ops.md)
+**Related:** [RULES.md](../RULES.md) / [UPGRADE.md](../UPGRADE.md) / [CHANGELOG.md](../CHANGELOG.md) / [contracts.md](./contracts.md) / [verification-and-ops.md](./verification-and-ops.md)
 
 ---
 

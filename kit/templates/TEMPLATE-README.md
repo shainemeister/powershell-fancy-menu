@@ -20,7 +20,7 @@ last_updated: "{{LAST_UPDATED}}"
 **Package version:** {{VERSION}}  
 **Folder:** `{{FOLDER_NAME}}/`  
 
-**Related docs:** [CLI-GUIDE.md](./CLI-GUIDE.md) | [SECURITY.md](./SECURITY.md)
+**Related docs:** [CLI-GUIDE.md](./CLI-GUIDE.md) / [SECURITY.md](./SECURITY.md)
 
 ---
 

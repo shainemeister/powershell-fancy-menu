@@ -30,7 +30,7 @@ Fundamental rules for maintaining a professional, auditable repository. This fil
 
 **Document version:** 2.0.1  
 
-**Related:** [README.md](../README.md) | [UPGRADE.md](./UPGRADE.md) | [MARKDOWN-STANDARD.md](./MARKDOWN-STANDARD.md) | [CHANGELOG.md](../CHANGELOG.md) | [rules/](./rules/)
+**Related:** [README.md](../README.md) / [UPGRADE.md](./UPGRADE.md) / [MARKDOWN-STANDARD.md](./MARKDOWN-STANDARD.md) / [CHANGELOG.md](../CHANGELOG.md) / [rules/](./rules/)
 
 ---
 
@@ -79,16 +79,16 @@ Replace paths below with your project's real files. Rows that do not apply may b
 |---------|------------------|
 | Repo purpose and quick start | Project root [README.md](../README.md) |
 | Project plan | Root [PLAN.md](../PLAN.md) |
-| Kit upgrade / migration (durable) | [UPGRADE.md](./UPGRADE.md) - under `kit/` |
-| Markdown structure, frontmatter, author checklist | [MARKDOWN-STANDARD.md](./MARKDOWN-STANDARD.md) | [templates/](./templates/) |
+| Kit upgrade / migration (durable) / [UPGRADE.md](./UPGRADE.md) - under `kit/` |
+| Markdown structure, frontmatter, author checklist | [MARKDOWN-STANDARD.md](./MARKDOWN-STANDARD.md) / [templates/](./templates/) |
 | Maintenance policy hub (this file) | **`kit/RULES.md`** ([RULES.md](./RULES.md)) |
-| Contract policy (breaking changes, co-updates, cross-links) | [rules/contracts.md](./rules/contracts.md) |
-| Root hygiene / packaging (`kit/` vs product) | [rules/hygiene.md](./rules/hygiene.md) |
+| Contract policy (breaking changes, co-updates, cross-links) / [rules/contracts.md](./rules/contracts.md) |
+| Root hygiene / packaging (`kit/` vs product) / [rules/hygiene.md](./rules/hygiene.md) |
 | Authoring + style gates | [rules/authoring-and-style.md](./rules/authoring-and-style.md) |
 | Architecture boundaries | [rules/architecture.md](./rules/architecture.md) |
 | Security, inventory, SAST, certification | [rules/security.md](./rules/security.md) |
 | Versioning, CHANGELOG rules, git | [rules/versioning-and-git.md](./rules/versioning-and-git.md) |
-| Verification, completion, checklist | [rules/verification-and-ops.md](./rules/verification-and-ops.md) | [Verification before ship](#verification-before-ship) |
+| Verification, completion, checklist | [rules/verification-and-ops.md](./rules/verification-and-ops.md) / [Verification before ship](#verification-before-ship) |
 | Project history (**required**) | Root [CHANGELOG.md](../CHANGELOG.md) |
 | Kit version history (upstream) | Kit source `kit/CHANGELOG.md` under `## repo-kit` |
 | Standards kit baseline | [Kit baseline](#kit-baseline) in this file (version + source) |
@@ -98,8 +98,8 @@ Replace paths below with your project's real files. Rows that do not apply may b
 | Security / trust boundary | [packages/PsMenuKit/SECURITY.md](../packages/PsMenuKit/SECURITY.md) |
 | Language surface inventory | [Language surface inventory](#language-surface-inventory) (this file) |
 | Default sample menu config | [demos/menus/sample.menu.psd1](../demos/menus/sample.menu.psd1) |
-| Golden tests / fixtures | [tests/](../tests/) | [tests/fixtures/](../tests/fixtures/) |
-| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) | [demos/Launch.Enterprise.cmd](../demos/Launch.Enterprise.cmd) | [demos/Demo.ps1](../demos/Demo.ps1) |
+| Golden tests / fixtures | [tests/](../tests/) / [tests/fixtures/](../tests/fixtures/) |
+| Windows launcher demo | [demos/Launch.cmd](../demos/Launch.cmd) / [demos/Launch.Enterprise.cmd](../demos/Launch.Enterprise.cmd) / [demos/Demo.ps1](../demos/Demo.ps1) |
 
 **Rule:** Adding, removing, or renaming intentional source files should update the inventory (catalog or equivalent) in the same change set when the project maintains one.
 

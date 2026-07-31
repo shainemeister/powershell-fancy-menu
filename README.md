@@ -7,8 +7,8 @@ Dependency-free **Windows PowerShell 5.1** modular console menu kit. Launch demo
 | You want to... | Start here |
 |--------------|------------|
 | Try the interactive demo | Double-click [`demos/Launch.cmd`](./demos/Launch.cmd) |
-| Enterprise launcher pattern | [`demos/Launch.Enterprise.cmd`](./demos/Launch.Enterprise.cmd) | [SECURITY.md](./packages/PsMenuKit/SECURITY.md) |
-| Build a custom menu | [packages/PsMenuKit/README.md](./packages/PsMenuKit/README.md) | [CLI-GUIDE.md](./packages/PsMenuKit/CLI-GUIDE.md) |
+| Enterprise launcher pattern | [`demos/Launch.Enterprise.cmd`](./demos/Launch.Enterprise.cmd) / [SECURITY.md](./packages/PsMenuKit/SECURITY.md) |
+| Build a custom menu | [packages/PsMenuKit/README.md](./packages/PsMenuKit/README.md) / [CLI-GUIDE.md](./packages/PsMenuKit/CLI-GUIDE.md) |
 | Understand composition | [METHODOLOGY.md](./packages/PsMenuKit/METHODOLOGY.md) |
 | See trust / execution rules | [SECURITY.md](./packages/PsMenuKit/SECURITY.md) |
 | Project plan and roadmap | [PLAN.md](./PLAN.md) |

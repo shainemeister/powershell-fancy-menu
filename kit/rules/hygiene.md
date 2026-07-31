@@ -22,7 +22,7 @@ Keep the repository root **scannable**: entry points and project-specific surfac
 
 **Document version:** 1.1.0  
 
-**Related:** [RULES.md](../RULES.md) | [SETUP.md](../SETUP.md) | [UPGRADE.md](../UPGRADE.md) | [CHANGELOG.md](../CHANGELOG.md) | [README.md](../../README.md)
+**Related:** [RULES.md](../RULES.md) / [SETUP.md](../SETUP.md) / [UPGRADE.md](../UPGRADE.md) / [CHANGELOG.md](../CHANGELOG.md) / [README.md](../../README.md)
 
 ---
 

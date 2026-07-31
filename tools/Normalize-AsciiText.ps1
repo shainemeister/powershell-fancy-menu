@@ -29,7 +29,7 @@ $excludeDirNames = @('.git')
 $replacements = @(
     @{ From = [char]0x2014; To = ' - ' }   # em dash
     @{ From = [char]0x2013; To = '-' }     # en dash
-    @{ From = [char]0x00B7; To = ' | ' }   # middle dot
+    @{ From = [char]0x00B7; To = ' / ' }   # middle dot (avoid | which breaks markdown tables)
     @{ From = [char]0x2026; To = '...' }   # ellipsis
     @{ From = [char]0x2192; To = '->' }    # right arrow
     @{ From = [char]0x21D2; To = '=>' }    # double arrow

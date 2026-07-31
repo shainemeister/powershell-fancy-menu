@@ -23,7 +23,7 @@ Hard rules for product code and launchers, inventory-driven SAST, and optional f
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) | [contracts.md](./contracts.md) | [authoring-and-style.md](./authoring-and-style.md) | [verification-and-ops.md](./verification-and-ops.md) | [TEMPLATE-SECURITY](../templates/TEMPLATE-SECURITY.md) | [TEMPLATE-CERTIFICATION-README](../templates/TEMPLATE-CERTIFICATION-README.md)
+**Related:** [RULES.md](../RULES.md) / [contracts.md](./contracts.md) / [authoring-and-style.md](./authoring-and-style.md) / [verification-and-ops.md](./verification-and-ops.md) / [TEMPLATE-SECURITY](../templates/TEMPLATE-SECURITY.md) / [TEMPLATE-CERTIFICATION-README](../templates/TEMPLATE-CERTIFICATION-README.md)
 
 ---
 

@@ -24,7 +24,7 @@ Stable promises a repository makes - behavior, shapes, exits, fields - and the r
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) | [architecture.md](./architecture.md) | [versioning-and-git.md](./versioning-and-git.md) | [verification-and-ops.md](./verification-and-ops.md) | [authoring-and-style.md](./authoring-and-style.md) | [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md)
+**Related:** [RULES.md](../RULES.md) / [architecture.md](./architecture.md) / [versioning-and-git.md](./versioning-and-git.md) / [verification-and-ops.md](./verification-and-ops.md) / [authoring-and-style.md](./authoring-and-style.md) / [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md)
 
 ---
 

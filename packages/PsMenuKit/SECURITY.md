@@ -28,7 +28,7 @@ Enterprise-oriented trust boundary for **PsMenuKit**: a modular, dependency-free
 **Package folder:** `packages/PsMenuKit/`  
 **Runtime:** Windows PowerShell 5.1 (`powershell.exe`) - zero product runtime dependencies
 
-**Related docs:** [README.md](./README.md) | [CLI-GUIDE.md](./CLI-GUIDE.md) | [METHODOLOGY.md](./METHODOLOGY.md) | [kit/rules/security.md](../../kit/rules/security.md)
+**Related docs:** [README.md](./README.md) / [CLI-GUIDE.md](./CLI-GUIDE.md) / [METHODOLOGY.md](./METHODOLOGY.md) / [kit/rules/security.md](../../kit/rules/security.md)
 
 ---
 

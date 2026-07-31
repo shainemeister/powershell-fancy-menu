@@ -22,7 +22,7 @@ How to write and structure documentation, and how to gate product code style (Do
 
 **Document version:** 1.0.0  
 
-**Related:** [RULES.md](../RULES.md) | [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) | [contracts.md](./contracts.md) | [verification-and-ops.md](./verification-and-ops.md) | [pylintrc](../configs/pylintrc)
+**Related:** [RULES.md](../RULES.md) / [MARKDOWN-STANDARD.md](../MARKDOWN-STANDARD.md) / [contracts.md](./contracts.md) / [verification-and-ops.md](./verification-and-ops.md) / [pylintrc](../configs/pylintrc)
 
 ---
 
