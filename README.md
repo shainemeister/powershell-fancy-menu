@@ -67,7 +67,7 @@ CHANGELOG.md          # project history
 
 ## Status
 
-**0.4.0** - Enterprise-only `Launch.cmd`, certification harness, consumer template, MultiSelect demo, Core hot-path polish. See [CHANGELOG.md](./CHANGELOG.md).
+**0.5.0** - Security hardening (action type fail-closed, HandlerMap validation, AllowedRoot reparse reject, config limits, display sanitization), expanded gates, Windows CI. See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

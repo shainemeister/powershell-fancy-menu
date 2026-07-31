@@ -1,10 +1,14 @@
 function Get-PsMenuDisplayText {
     <#
     .SYNOPSIS
-        Truncates text to a maximum character width for console display.
+        Truncates and sanitizes text for safe console display.
     .DESCRIPTION
         Uses simple character length (PS 5.1 safe). Wide Unicode glyphs may
         still wrap; truncation prevents hard failures on long labels.
+
+        Control characters and ANSI/OSC escape sequences are stripped so
+        untrusted menu labels cannot rewrite the terminal title or inject
+        misleading control sequences (best-effort display integrity).
     .PARAMETER Text
         Input string (null treated as empty).
     .PARAMETER MaxWidth
@@ -31,6 +35,12 @@ function Get-PsMenuDisplayText {
     if ($null -eq $Text) {
         $Text = ''
     }
+
+    # Strip ANSI CSI/OSC and other C0 controls (keep tab/newline as spaces)
+    $Text = [regex]::Replace($Text, '\x1B\[[0-9;?]*[ -/]*[@-~]', '')
+    $Text = [regex]::Replace($Text, '\x1B\][^\x07\x1B]*(?:\x07|\x1B\\)?', '')
+    $Text = [regex]::Replace($Text, '[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '')
+    $Text = $Text -replace "[\r\n\t]+", ' '
 
     if (-not $PSBoundParameters.ContainsKey('MaxWidth')) {
         $consoleWidth = Get-PsMenuConsoleWidth

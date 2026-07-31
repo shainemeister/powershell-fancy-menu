@@ -1,6 +1,11 @@
 # PsMenuKit.Config - load menu models from .psd1 / JSON (PS 5.1)
 # Security: local filesystem only; Handler names mapped by host; no code-from-file.
 
+# Default resource limits (fail closed). Override via Import-PsMenuConfig parameters.
+$script:PsMenuConfigDefaultMaxItems = 500
+$script:PsMenuConfigDefaultMaxDepth = 16
+$script:PsMenuConfigDefaultMaxLabelLength = 500
+
 function Import-PsMenuConfig {
     <#
     .SYNOPSIS
@@ -16,7 +21,10 @@ function Import-PsMenuConfig {
         Security controls:
         - Local filesystem paths only (rejects http/https/ftp and URL-like paths)
         - Optional -AllowedRoot: resolved path must stay under that directory
+        - Reparse points (junctions/symlinks) under AllowedRoot are rejected
         - Extensions .psd1 and .json only
+        - HandlerMap values must be scriptblocks
+        - Graph limits: MaxItems, MaxDepth, MaxLabelLength (fail closed)
         - Fail closed on missing/invalid files
     .PARAMETER Path
         Path to local .psd1 or .json menu file.
@@ -24,11 +32,19 @@ function Import-PsMenuConfig {
         Hashtable of handler name -> scriptblock (trusted host code).
     .PARAMETER DefaultAction
         Fallback scriptblock when Handler is missing (optional).
+        Prefer explicit HandlerMap keys; use DefaultAction only as intentional catch-all.
     .PARAMETER AllowedRoot
         Optional directory; config path must resolve under this root.
+        Enterprise hosts should always set this.
     .PARAMETER AllowUnc
         When set, UNC paths are allowed (still must pass AllowedRoot if set).
         Default is to reject UNC for enterprise-safe defaults.
+    .PARAMETER MaxItems
+        Maximum total menu items including nested children (default 500).
+    .PARAMETER MaxDepth
+        Maximum Children nesting depth in the config graph (default 16).
+    .PARAMETER MaxLabelLength
+        Maximum Label character length (default 500).
     #>
     [CmdletBinding()]
     [OutputType([pscustomobject])]
@@ -47,13 +63,29 @@ function Import-PsMenuConfig {
         [string]$AllowedRoot,
 
         [Parameter(Mandatory = $false)]
-        [switch]$AllowUnc
+        [switch]$AllowUnc,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 100000)]
+        [int]$MaxItems = 500,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 256)]
+        [int]$MaxDepth = 16,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 10000)]
+        [int]$MaxLabelLength = 500
     )
 
     $newMenuCmd = Get-Command -Name 'New-PsMenu' -ErrorAction SilentlyContinue
     $newItemCmd = Get-Command -Name 'New-PsMenuItem' -ErrorAction SilentlyContinue
     if ($null -eq $newMenuCmd -or $null -eq $newItemCmd) {
         throw 'Import-PsMenuConfig requires PsMenuKit.Core (New-PsMenu, New-PsMenuItem).'
+    }
+
+    if ($null -ne $HandlerMap) {
+        Assert-PsMenuHandlerMap -HandlerMap $HandlerMap
     }
 
     $fullPath = Resolve-PsMenuConfigPath -Path $Path -AllowedRoot $AllowedRoot -AllowUnc:$AllowUnc
@@ -83,13 +115,26 @@ function Import-PsMenuConfig {
     if ([string]::IsNullOrWhiteSpace([string]$title)) {
         throw "Menu config missing Title: $fullPath"
     }
+    if (([string]$title).Length -gt $MaxLabelLength) {
+        throw ("Menu Title exceeds MaxLabelLength ({0})." -f $MaxLabelLength)
+    }
 
     $rawItems = Get-PsMenuConfigValue -Data $data -Name 'Items'
     if ($null -eq $rawItems) {
         $rawItems = @()
     }
 
-    $items = ConvertTo-PsMenuItemModels -RawItems @($rawItems) -HandlerMap $HandlerMap -DefaultAction $DefaultAction -NewItemCommand $newItemCmd
+    $itemCounter = [ref]0
+    $items = ConvertTo-PsMenuItemModels `
+        -RawItems @($rawItems) `
+        -HandlerMap $HandlerMap `
+        -DefaultAction $DefaultAction `
+        -NewItemCommand $newItemCmd `
+        -Depth 1 `
+        -MaxDepth $MaxDepth `
+        -MaxItems $MaxItems `
+        -MaxLabelLength $MaxLabelLength `
+        -ItemCounter $itemCounter
 
     $params = @{
         Title = [string]$title
@@ -97,7 +142,11 @@ function Import-PsMenuConfig {
     }
     $subtitle = Get-PsMenuConfigValue -Data $data -Name 'Subtitle'
     if (-not [string]::IsNullOrWhiteSpace([string]$subtitle)) {
-        $params['Subtitle'] = [string]$subtitle
+        $subStr = [string]$subtitle
+        if ($subStr.Length -gt $MaxLabelLength) {
+            throw ("Menu Subtitle exceeds MaxLabelLength ({0})." -f $MaxLabelLength)
+        }
+        $params['Subtitle'] = $subStr
     }
     $theme = Get-PsMenuConfigValue -Data $data -Name 'Theme'
     if ($null -ne $theme) {
@@ -109,6 +158,25 @@ function Import-PsMenuConfig {
     }
 
     return & $newMenuCmd @params
+}
+
+function Assert-PsMenuHandlerMap {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$HandlerMap
+    )
+
+    foreach ($key in @($HandlerMap.Keys)) {
+        $value = $HandlerMap[$key]
+        if ($null -eq $value) {
+            throw ("HandlerMap entry '{0}' is null. Handler values must be scriptblocks." -f $key)
+        }
+        if (-not ($value -is [scriptblock])) {
+            $typeName = $value.GetType().FullName
+            throw ("HandlerMap entry '{0}' must be a scriptblock (got {1}). Host-trusted code only." -f $key, $typeName)
+        }
+    }
 }
 
 function Resolve-PsMenuConfigPath {
@@ -187,9 +255,70 @@ function Resolve-PsMenuConfigPath {
             -not ($filePath.Equals($rootFull.TrimEnd('\'), [System.StringComparison]::OrdinalIgnoreCase))) {
             throw "Menu config path is outside AllowedRoot. Path=$fullPath Root=$rootFull"
         }
+
+        # Reject junctions/symlinks between AllowedRoot and the file so a
+        # reparse point cannot escape the logical prefix check.
+        if (Test-PsMenuPathHasReparseUnderRoot -FullPath $fullPath -RootFull $rootFull) {
+            throw "Menu config path contains a reparse point (junction/symlink) under AllowedRoot, which is not allowed. Path=$fullPath Root=$rootFull"
+        }
     }
 
     return $fullPath
+}
+
+function Test-PsMenuPathHasReparseUnderRoot {
+    <#
+    .SYNOPSIS
+        Returns $true if any path segment from file up to (but not including) root is a reparse point.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FullPath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$RootFull
+    )
+
+    $stop = $RootFull.TrimEnd('\')
+    $current = $FullPath
+
+    while (-not [string]::IsNullOrEmpty($current)) {
+        if ($current.Equals($stop, [System.StringComparison]::OrdinalIgnoreCase)) {
+            break
+        }
+
+        # Stop if we walked above the root (should not happen after prefix check)
+        $currentPrefix = $current.TrimEnd('\') + '\'
+        $stopPrefix = $stop + '\'
+        if (-not $current.Equals($stop, [System.StringComparison]::OrdinalIgnoreCase) -and
+            -not $current.StartsWith($stopPrefix, [System.StringComparison]::OrdinalIgnoreCase) -and
+            -not $stop.StartsWith($currentPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            break
+        }
+
+        try {
+            if (Test-Path -LiteralPath $current) {
+                $attrs = [System.IO.File]::GetAttributes($current)
+                if (($attrs -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
+                    return $true
+                }
+            }
+        }
+        catch {
+            # If attributes cannot be read, fail closed when under AllowedRoot
+            return $true
+        }
+
+        $parent = [System.IO.Path]::GetDirectoryName($current)
+        if ([string]::IsNullOrEmpty($parent) -or $parent.Equals($current, [System.StringComparison]::OrdinalIgnoreCase)) {
+            break
+        }
+        $current = $parent
+    }
+
+    return $false
 }
 
 function Assert-PsMenuConfigSchema {
@@ -254,12 +383,28 @@ function ConvertTo-PsMenuItemModels {
         [object[]]$RawItems,
         [hashtable]$HandlerMap,
         [scriptblock]$DefaultAction,
-        [System.Management.Automation.CommandInfo]$NewItemCommand
+        [System.Management.Automation.CommandInfo]$NewItemCommand,
+        [int]$Depth = 1,
+        [int]$MaxDepth = 16,
+        [int]$MaxItems = 500,
+        [int]$MaxLabelLength = 500,
+        [ref]$ItemCounter
     )
+
+    if ($Depth -gt $MaxDepth) {
+        throw ("Menu config exceeds MaxDepth ({0}). Nested Children graphs must stay within the limit." -f $MaxDepth)
+    }
 
     $list = New-Object System.Collections.Generic.List[object]
     foreach ($raw in @($RawItems)) {
         if ($null -eq $raw) { continue }
+
+        if ($null -ne $ItemCounter) {
+            $ItemCounter.Value++
+            if ($ItemCounter.Value -gt $MaxItems) {
+                throw ("Menu config exceeds MaxItems ({0})." -f $MaxItems)
+            }
+        }
 
         # Per-item ban check for nested structures
         Assert-PsMenuConfigSchema -Data $raw
@@ -268,9 +413,13 @@ function ConvertTo-PsMenuItemModels {
         if ([string]::IsNullOrWhiteSpace([string]$label)) {
             throw 'Menu item missing Label in config.'
         }
+        $labelStr = [string]$label
+        if ($labelStr.Length -gt $MaxLabelLength) {
+            throw ("Menu item Label exceeds MaxLabelLength ({0})." -f $MaxLabelLength)
+        }
 
         $itemParams = @{
-            Label = [string]$label
+            Label = $labelStr
         }
 
         $id = Get-PsMenuConfigValue -Data $raw -Name 'Id'
@@ -290,7 +439,11 @@ function ConvertTo-PsMenuItemModels {
 
         $confirm = Get-PsMenuConfigValue -Data $raw -Name 'ConfirmMessage'
         if (-not [string]::IsNullOrWhiteSpace([string]$confirm)) {
-            $itemParams['ConfirmMessage'] = [string]$confirm
+            $confirmStr = [string]$confirm
+            if ($confirmStr.Length -gt $MaxLabelLength) {
+                throw ("Menu item ConfirmMessage exceeds MaxLabelLength ({0})." -f $MaxLabelLength)
+            }
+            $itemParams['ConfirmMessage'] = $confirmStr
         }
 
         $meta = Get-PsMenuConfigValue -Data $raw -Name 'Meta'
@@ -305,7 +458,16 @@ function ConvertTo-PsMenuItemModels {
 
         $childrenRaw = Get-PsMenuConfigValue -Data $raw -Name 'Children'
         if ($null -ne $childrenRaw -and @($childrenRaw).Count -gt 0) {
-            $itemParams['Children'] = ConvertTo-PsMenuItemModels -RawItems @($childrenRaw) -HandlerMap $HandlerMap -DefaultAction $DefaultAction -NewItemCommand $NewItemCommand
+            $itemParams['Children'] = ConvertTo-PsMenuItemModels `
+                -RawItems @($childrenRaw) `
+                -HandlerMap $HandlerMap `
+                -DefaultAction $DefaultAction `
+                -NewItemCommand $NewItemCommand `
+                -Depth ($Depth + 1) `
+                -MaxDepth $MaxDepth `
+                -MaxItems $MaxItems `
+                -MaxLabelLength $MaxLabelLength `
+                -ItemCounter $ItemCounter
         }
 
         $handlerName = Get-PsMenuConfigValue -Data $raw -Name 'Handler'
@@ -314,6 +476,10 @@ function ConvertTo-PsMenuItemModels {
             $key = [string]$handlerName
             if ($HandlerMap.ContainsKey($key)) {
                 $action = $HandlerMap[$key]
+                # Defense in depth (Assert-PsMenuHandlerMap already ran)
+                if (-not ($action -is [scriptblock])) {
+                    throw ("HandlerMap entry '{0}' must be a scriptblock." -f $key)
+                }
             }
         }
         if ($null -eq $action -and $null -ne $DefaultAction) {

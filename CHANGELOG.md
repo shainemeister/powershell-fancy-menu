@@ -8,6 +8,29 @@ Standards kit history lives upstream under [repo-kit](https://github.com/shainem
 
 ## powershell-fancy-menu
 
+### [0.5.0] - 2026-07-30
+
+#### Security
+
+- **Action invoke fail-closed:** only `[scriptblock]` Actions run; mutated string/command Actions rejected (`Invoke-PsMenuItemAction`)
+- **HandlerMap validation:** non-scriptblock map values throw clear errors at config bind time
+- **AllowedRoot reparse reject:** junctions/symlinks under the allowlisted root are rejected (prefix-escape mitigation)
+- **Config graph limits:** `MaxItems` (500), `MaxDepth` (16), `MaxLabelLength` (500) with fail-closed defaults
+- **Display sanitization:** ANSI/OSC and C0 control characters stripped in `Get-PsMenuDisplayText`
+- **Expanded ban-list:** additional abuse patterns; scans `packages/` and `templates/`; comment-stripped matching
+- **CI:** `.github/workflows/ci.yml` runs `Run-AllGates.ps1 -RequireAnalyzer` and certification on Windows
+- **SECURITY.md:** IT hardening checklist; honest CLM unsupported for Action dispatch; controls documented
+
+#### Added
+
+- `tests/Security.Action.Tests.ps1` (action type, display, limits, junction when available)
+- Wired into `Run-AllGates.ps1` and certification Domain A checks
+
+#### Changed
+
+- Package / Core / Config module versions **0.5.0**
+- CLI-GUIDE Import-PsMenuConfig parameters for limits and security behavior
+
 ### [0.4.0] - 2026-07-30
 
 #### Added

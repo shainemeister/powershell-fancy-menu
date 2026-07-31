@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PsMenuKit.Core.psm1'
-    ModuleVersion     = '0.4.0'
+    ModuleVersion     = '0.5.0'
     GUID              = 'a3c8e1f2-5b6d-4e9a-9c1d-7f2e8b4a0d15'
     Author            = 'powershell-fancy-menu contributors'
     CompanyName       = 'powershell-fancy-menu'
@@ -21,7 +21,7 @@
             Tags         = @('Menu', 'Console', 'TUI', 'Windows', 'PowerShell51')
             LicenseUri   = ''
             ProjectUri   = ''
-            ReleaseNotes = '0.4.0: Cache feature command lookups once per menu session.'
+            ReleaseNotes = '0.5.0: Action type fail-closed; display sanitization (ANSI/control strip).'
         }
     }
 }

@@ -108,6 +108,7 @@ PsMenuKit is designed for **enterprise-compatible** use: current user only, offl
 
 | Version | Notes |
 |---------|--------|
+| 0.5.0 | Action fail-closed; graph limits; reparse reject; display sanitization; CI |
 | 0.4.0 | Enterprise Launch only; cert + consumer template pointers |
 | 0.3.0 | Console restore, edges, nest depth, Run-AllGates |
 | 0.2.1 | Enterprise security close-out (SECURITY, Config controls) |

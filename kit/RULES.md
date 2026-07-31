@@ -109,7 +109,7 @@ Replace paths below with your project's real files. Rows that do not apply may b
 
 | Surface | Domain B (validation) | Domain A (security) | Notes |
 |---------|----------------------|---------------------|--------|
-| **PowerShell** product code | `tests/Parse-Gate.ps1` exit 0; `tests/Core.Model.Tests.ps1`; `tests/Feature.Modules.Tests.ps1`; PS 5.1 only | **PSScriptAnalyzer** `-Severity Error` (developer tooling; required when installed - missing tool fails ship of security-sensitive change sets); kit ban-list `tests/Security.BanList.Tests.ps1`; Config path tests `tests/Security.Config.Tests.ps1` | Runtime: Windows PowerShell 5.1; **zero** product deps; no network/elevation in kit |
+| **PowerShell** product code | `tests/Parse-Gate.ps1` exit 0; `tests/Core.Model.Tests.ps1`; `tests/Feature.Modules.Tests.ps1`; PS 5.1 only | **PSScriptAnalyzer** `-Severity Error` (required in CI via `-RequireAnalyzer`); kit ban-list `tests/Security.BanList.Tests.ps1` (packages + templates); Config path tests `tests/Security.Config.Tests.ps1`; Action/limits/display `tests/Security.Action.Tests.ps1` | Runtime: Windows PowerShell 5.1; **zero** product deps; no network/elevation in kit |
 | **Shell** product (`.cmd` launchers) | Documented launcher checklist in [SECURITY.md](../packages/PsMenuKit/SECURITY.md) | Manual review; no download-and-run; enterprise `Launch.cmd` (no Bypass) | Windows primary |
 | **Secrets** (optional enterprise) | - | **Gitleaks** `gitleaks detect` when team enables secrets scanning | Prefer enable for enterprise releases |
 
@@ -120,7 +120,8 @@ Replace paths below with your project's real files. Rows that do not apply may b
 | Core / module behavior | `demos\Launch.cmd` + [tests/MANUAL.md](../tests/MANUAL.md) critical path |
 | Public API | Contract in CLI-GUIDE matches exports; smoke import in demo |
 | Domain B + kit security (primary) | `powershell.exe -NoProfile -File tests\Run-AllGates.ps1` exit 0 |
-| Domain A (PSScriptAnalyzer) | Included optionally in Run-AllGates; or `tests\Run-ScriptAnalyzer.ps1` (exit 0 pass, exit 2 skip if missing, exit 1 fail). Use `-RequireAnalyzer` / `-RequireModule` when CI has the module. |
+| Domain A (PSScriptAnalyzer) | Included in Run-AllGates; CI uses `-RequireAnalyzer`. Local skip (exit 2) only when module missing outside CI. |
+| CI | `.github/workflows/ci.yml` Windows job: install analyzer, `Run-AllGates -RequireAnalyzer`, certification artifact |
 | Formal certification | `certification\New-Certification.ps1`; OverallPass true; do not stage `last_certification.*` |
 | Domain A (Secrets, if inventory enabled) | `gitleaks detect --source .` clean |
 | Docs / contracts | Authority map paths resolve; SECURITY.md matches behavior; no leftover `{{PLACEHOLDERS}}` |

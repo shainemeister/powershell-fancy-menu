@@ -47,6 +47,16 @@ See repository tree: `kit/` (standards), `packages/PsMenuKit/` (product), `demos
 | 2 | Feature modules + enterprise security | **Done** (0.2.0 / 0.2.1) |
 | 3 | Hardening + verification | **Done** (0.3.0) |
 | 4 | Adoption + cert + enterprise Launch + quality | **Done** (0.4.0) |
+| 5 | Post-0.4 security defense-in-depth + CI | **Done** (0.5.0) |
+
+### Phase 5 delivered (0.5.0)
+
+- Action type fail-closed; HandlerMap scriptblock validation
+- AllowedRoot reparse/junction reject; config MaxItems/MaxDepth/MaxLabelLength
+- Display control/ANSI sanitization
+- Expanded ban-list + templates scan; Security.Action tests
+- GitHub Actions CI with required PSScriptAnalyzer
+- SECURITY.md IT checklist; honest CLM posture
 
 ## Success criteria
 

@@ -97,6 +97,7 @@ $checks.Add((Invoke-CertCheck -Name 'Feature.Modules' -Domain 'CodeValidation' -
 # Domain A - security
 $checks.Add((Invoke-CertCheck -Name 'Security.BanList' -Domain 'Security' -Language 'PowerShell' -ScriptPath (Join-Path $testsRoot 'Security.BanList.Tests.ps1')))
 $checks.Add((Invoke-CertCheck -Name 'Security.Config' -Domain 'Security' -Language 'PowerShell' -ScriptPath (Join-Path $testsRoot 'Security.Config.Tests.ps1')))
+$checks.Add((Invoke-CertCheck -Name 'Security.Action' -Domain 'Security' -Language 'PowerShell' -ScriptPath (Join-Path $testsRoot 'Security.Action.Tests.ps1')))
 
 if (-not $SkipAnalyzer) {
     $analyzerArgs = @()
@@ -142,7 +143,7 @@ $cert = [ordered]@{
     GitBranch         = [string]$gitBranch
     GitDirty          = $gitDirty
     LanguageSurfaces  = @('PowerShell')
-    PackageVersions   = @{ PsMenuKit = '0.4.0' }
+    PackageVersions   = @{ PsMenuKit = '0.5.0' }
     ToolVersions      = @{ PowerShell = $PSVersionTable.PSVersion.ToString() }
     PassCriteria      = 'Critical checks exit 0; optional ScriptAnalyzer skip allowed unless -RequireAnalyzer'
     Domains           = @{

@@ -8,4 +8,4 @@ $menu = Import-PsMenuConfig -Path .\menus\app.menu.psd1 -AllowedRoot .\menus -Ha
 }
 ```
 
-Security: URI/remote paths rejected; UNC default-deny; optional `-AllowedRoot`; banned keys like `ActionScript` fail closed. See package [SECURITY.md](../../../SECURITY.md).
+Security: URI/remote paths rejected; UNC default-deny; optional `-AllowedRoot` (reparse/junction reject); HandlerMap values must be scriptblocks; graph limits (MaxItems/MaxDepth/MaxLabelLength); banned keys like `ActionScript` fail closed. See package [SECURITY.md](../../../SECURITY.md).

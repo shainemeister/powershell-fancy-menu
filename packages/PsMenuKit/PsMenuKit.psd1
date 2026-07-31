@@ -1,5 +1,5 @@
 @{
-    ModuleVersion     = '0.4.0'
+    ModuleVersion     = '0.5.0'
     GUID              = 'b4d9f2a1-6c7e-4f0b-8d2e-9a1c3e5f7b20'
     Author            = 'powershell-fancy-menu contributors'
     CompanyName       = 'powershell-fancy-menu'
@@ -44,7 +44,7 @@
     PrivateData       = @{
         PSData = @{
             Tags         = @('Menu', 'Console', 'Modular', 'Windows', 'PowerShell51')
-            ReleaseNotes = '0.4.0: Hot-path command cache; pairs with enterprise Launch and certification.'
+            ReleaseNotes = '0.5.0: Action type fail-closed; HandlerMap validation; AllowedRoot reparse reject; config graph limits; display sanitization; CI.'
         }
     }
 }
